@@ -25,9 +25,9 @@ Run lint and typecheck before declaring any task done.
 
 ## Navigation & Routing
 
-- Use **Expo Router** for all navigation. Routes live in `src/app/` — every file there is a screen, `_layout.tsx` files define navigators. Keep non-route code (components, hooks, utils) outside `src/app/`.
-- Import `Link`, `router`, and `useLocalSearchParams` from `expo-router`.
-- Docs: https://docs.expo.dev/router/introduction.md
+- This app does **not** use Expo Router. `src/app/AppNavigator.tsx` is a small state machine over four screens; see README "Architecture" for why. Expo CLI prints "Using src/app as the root directory for Expo Router" because of the folder name; that is harmless while expo-router is not installed.
+- Game logic lives in `src/game/` and must stay free of React and side effects. Run `pnpm verify` (typecheck, lint, tests) before declaring work done.
+- Package manager is pnpm (hoisted linker, see `pnpm-workspace.yaml`). ESLint is pinned to 9 because eslint-plugin-react (via eslint-config-expo) breaks on ESLint 10.
 
 ## Building with EAS
 

@@ -39,3 +39,8 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# EAS / App Store Connect credentials (see credentials/README.md)
+credentials/*
+!credentials/README.md
+.env.eas
