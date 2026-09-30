@@ -54,7 +54,7 @@ pnpm release:ios      # verify + build + submit
 ```
 
 One-time: the App Store Connect app record cannot be created with an API key. Create it by hand
-(App Store Connect → Apps → + → New App, bundle id `com.neonblocks.game`), then put its numeric
+(App Store Connect → Apps → + → New App, bundle id `com.neonblocks.cyber`), then put its numeric
 Apple ID into `eas.json` → `submit.production.ios.ascAppId`.
 
 The marketing version comes from `expo.version` in `app.json`; bump it by hand per release.

@@ -9,7 +9,7 @@
     "backgroundColor": "#080A12",
     "primaryColor": "#22D3EE",
     "ios": {
-      "bundleIdentifier": "com.neonblocks.game",
+      "bundleIdentifier": "com.neonblocks.cyber",
       "supportsTablet": false,
       "config": {
         "usesNonExemptEncryption": false
@@ -21,7 +21,7 @@
       }
     },
     "android": {
-      "package": "com.neonblocks.game",
+      "package": "com.neonblocks.cyber",
       "adaptiveIcon": {
         "backgroundColor": "#080A12",
         "foregroundImage": "./assets/android-icon-foreground.png",
