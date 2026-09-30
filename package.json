@@ -56,7 +56,8 @@
     "eas:credentials": "sh tools/eas.sh credentials",
     "build:ios": "sh tools/eas.sh build --platform ios --profile production --non-interactive --wait",
     "submit:ios": "sh tools/eas.sh submit --platform ios --profile production --latest --non-interactive --wait",
-    "release:ios": "pnpm verify && pnpm build:ios && pnpm submit:ios"
+    "release:ios": "pnpm verify && pnpm build:ios && pnpm submit:ios",
+    "asc:app-id": "node tools/asc-app-id.js"
   },
   "private": true,
   "packageManager": "pnpm@10.18.3",
