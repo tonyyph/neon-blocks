@@ -77,6 +77,9 @@ The marketing version comes from `expo.version` in `app.json`; bump it by hand p
 
 ## Store listing
 
+Everything to paste into App Store Connect (texts in EN and VI, privacy answers, age rating,
+review notes, screenshot plan) is in [docs/APP_STORE.md](docs/APP_STORE.md).
+
 - [ ] Privacy policy URL: host `PRIVACY.md` (for example on GitHub Pages)
 - [ ] App Store privacy "nutrition label": **Data Not Collected**
 - [ ] Google Play Data safety: no data collected or shared; no ads
