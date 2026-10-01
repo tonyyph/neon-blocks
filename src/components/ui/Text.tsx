@@ -1,3 +1,4 @@
+import { Children, type ReactNode } from 'react';
 import { Text as RNText, type TextProps } from 'react-native';
 
 import { type TypographyVariant, getTextStyle } from '../../theme/typography';
@@ -8,13 +9,25 @@ interface Props extends TextProps {
   color?: string;
 }
 
-export const Text = ({ variant = 'body', color, style, ...rest }: Props) => {
+/** The plain text inside `children`, so the font can be chosen for the letters it contains. */
+const plainText = (children: ReactNode): string =>
+  Children.toArray(children)
+    .filter((child) => typeof child === 'string' || typeof child === 'number')
+    .join('');
+
+export const Text = ({ variant = 'body', color, style, children, ...rest }: Props) => {
   const theme = useTheme();
   return (
     <RNText
       allowFontScaling={false}
-      style={[getTextStyle(variant, theme), { color: color ?? theme.colors.text }, style]}
+      style={[
+        getTextStyle(variant, theme, plainText(children)),
+        { color: color ?? theme.colors.text },
+        style,
+      ]}
       {...rest}
-    />
+    >
+      {children}
+    </RNText>
   );
 };

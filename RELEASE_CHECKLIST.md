@@ -27,6 +27,8 @@ Run on at least one small screen (iPhone SE / 5" Android) and one large (Pro Max
 - [ ] Zone charges, starts at half, freezes gravity, banks lines and bursts
 - [ ] Daily: first run counts, replays are marked Practice; streak grows on consecutive days
 - [ ] Records, Awards and Share (image in the share sheet) work after a game
+- [ ] Switch to Tiếng Việt: every screen, alert and the share sheet are in Vietnamese, and no
+      letter falls back to a system font in any theme
 - [ ] Each of the eight themes applies everywhere (menu, game, overlays, settings) and is kept
       after relaunch
 - [ ] With Reduce Motion on, the scan bar and title glitch stop

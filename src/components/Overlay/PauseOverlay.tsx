@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
 import { spacing } from '../../theme/spacing';
+import { useT } from '../../i18n';
 import { useTheme } from '../../theme/useTheme';
 import { Button } from '../ui/Button';
 import { GlitchText } from '../ui/GlitchText';
@@ -15,15 +16,16 @@ interface Props {
 
 export const PauseOverlay = ({ onResume, onRestart, onSettings, onMenu }: Props) => {
   const { colors } = useTheme();
+  const t = useT();
   return (
     <OverlayCard accent={colors.secondary}>
       <View style={styles.title}>
-        <GlitchText variant="title">Paused</GlitchText>
+        <GlitchText variant="title">{t.pause.title}</GlitchText>
       </View>
-      <Button label="Resume" icon="play" variant="primary" onPress={onResume} />
-      <Button label="Restart" icon="restart" onPress={onRestart} />
-      <Button label="Settings" icon="cog-outline" onPress={onSettings} />
-      <Button label="Main menu" icon="home-outline" onPress={onMenu} />
+      <Button label={t.pause.resume} icon="play" variant="primary" onPress={onResume} />
+      <Button label={t.pause.restart} icon="restart" onPress={onRestart} />
+      <Button label={t.pause.settings} icon="cog-outline" onPress={onSettings} />
+      <Button label={t.pause.menu} icon="home-outline" onPress={onMenu} />
     </OverlayCard>
   );
 };

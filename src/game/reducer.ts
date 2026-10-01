@@ -29,6 +29,7 @@ import type {
   GameState,
   Mutator,
   PieceType,
+  Scenario,
   ZoneState,
 } from './types';
 import {
@@ -238,8 +239,8 @@ const stepGravity = (state: GameState, deltaMs: number): GameState => {
   let { active, gravityMs, lowestY, lockResets } = state;
   if (!active) return state;
 
-  // Zone freezes gravity; the lock delay below still applies to a grounded piece.
-  if (!state.zone.active) {
+  // Zone (and the tutorial) freeze gravity; the lock delay below still applies to a grounded piece.
+  if (!state.zone.active && MODES[state.mode].gravity) {
     const interval = dropInterval(state);
     gravityMs += deltaMs;
     while (gravityMs >= interval) {
@@ -426,9 +427,9 @@ const hardDrop = (state: GameState): GameState => {
 const softDrop = (state: GameState, active: ActivePiece): GameState => {
   const moved = tryMove(state.board, active, 0, 1);
   if (!moved) return state;
-  return afterShift(
-    { ...state, gravityMs: 0, score: state.score + SOFT_DROP_POINTS_PER_CELL },
-    moved,
+  return withEvents(
+    afterShift({ ...state, gravityMs: 0, score: state.score + SOFT_DROP_POINTS_PER_CELL }, moved),
+    { type: 'softDrop' },
   );
 };
 
@@ -453,7 +454,7 @@ const playingReducer = (state: GameState, action: GameAction): GameState => {
       // The Mirror mutator swaps left and right.
       const dx = state.mutator === 'mirror' ? -action.dx : action.dx;
       const moved = tryMove(state.board, state.active, dx, 0);
-      return moved ? withEvents(afterShift(state, moved), { type: 'move' }) : state;
+      return moved ? withEvents(afterShift(state, moved), { type: 'move', dx }) : state;
     }
     case 'rotate': {
       const rotated = tryRotate(state.board, state.active, action.direction);
@@ -475,6 +476,7 @@ const startGame = (
   seed: number,
   mode: GameMode,
   dateKey: string | null,
+  scenario: Scenario | undefined,
 ): GameState => {
   const config = MODES[mode];
   let fresh = createInitialState(seed, state.gameId + 1, mode, mode === 'daily' ? dateKey : null);
@@ -486,6 +488,14 @@ const startGame = (
     fresh = { ...fresh, board, seed: random.seed, garbageLeft: countGarbageRows(board) };
   }
   if (mode === 'daily' && dateKey) fresh = { ...fresh, mutator: dailyMutator(dateKey) };
+  if (scenario) {
+    fresh = {
+      ...fresh,
+      board: scenario.board ?? fresh.board,
+      queue: scenario.pieces ?? fresh.queue,
+      zone: { ...fresh.zone, meter: scenario.zoneMeter ?? 0 },
+    };
+  }
   return spawnNext(fresh);
 };
 
@@ -494,7 +504,13 @@ export const gameReducer = (previous: GameState, action: GameAction): GameState 
   const state = previous.events.length ? { ...previous, events: NO_EVENTS } : previous;
 
   if (action.type === 'start') {
-    return startGame(state, action.seed, action.mode ?? 'marathon', action.dateKey ?? null);
+    return startGame(
+      state,
+      action.seed,
+      action.mode ?? 'marathon',
+      action.dateKey ?? null,
+      action.scenario,
+    );
   }
   if (action.type === 'quit') return createInitialState(state.seed, state.gameId);
 

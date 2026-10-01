@@ -1,6 +1,6 @@
 import type { TextStyle } from 'react-native';
 
-import { LINE_BOX } from './fonts';
+import { LINE_BOX, resolveFont } from './fonts';
 import type { Theme } from './themes';
 
 type FontRole = keyof Theme['fonts'];
@@ -30,10 +30,17 @@ export type TypographyVariant = keyof typeof SCALE;
 /** Every variant, for tests that check the whole scale. */
 export const SCALE_FOR_TESTS = Object.keys(SCALE) as TypographyVariant[];
 
-/** Custom fonts carry their own weight, so no fontWeight is set (Android would fake-bold it). */
-export const getTextStyle = (variant: TypographyVariant, theme: Theme): TextStyle => {
+/**
+ * Custom fonts carry their own weight, so no fontWeight is set (Android would fake-bold it).
+ * Pass the text so a Vietnamese string can switch to a font that has its letters.
+ */
+export const getTextStyle = (
+  variant: TypographyVariant,
+  theme: Theme,
+  text?: string,
+): TextStyle => {
   const step: Step = SCALE[variant];
-  const fontFamily = theme.fonts[step.role];
+  const fontFamily = resolveFont(theme.fonts[step.role], text);
   return {
     fontFamily,
     fontSize: step.size,

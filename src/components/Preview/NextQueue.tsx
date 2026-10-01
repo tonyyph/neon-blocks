@@ -2,6 +2,7 @@ import { StyleSheet, View } from 'react-native';
 import { useShallow } from 'zustand/react/shallow';
 
 import { selectNextPieces } from '../../game/selectors';
+import { useT } from '../../i18n';
 import { useGameStore } from '../../store/gameStore';
 import { spacing } from '../../theme/spacing';
 import { useTheme } from '../../theme/useTheme';
@@ -15,9 +16,10 @@ interface Props {
 /** Upcoming pieces in a row, the next one full size and the rest smaller. */
 export const NextQueue = ({ cellSize }: Props) => {
   const theme = useTheme();
+  const t = useT();
   const next = useGameStore(useShallow((store) => selectNextPieces(store.game)));
   return (
-    <Panel label="Next" style={styles.panel}>
+    <Panel label={t.common.next} style={styles.panel}>
       <View style={styles.list}>
         {next.map((type, index) => (
           <PiecePreview

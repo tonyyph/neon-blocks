@@ -5,54 +5,21 @@ import { Icon, type IconName } from '../components/ui/Icon';
 import { Screen } from '../components/ui/Screen';
 import { ScreenHeader } from '../components/ui/ScreenHeader';
 import { Text } from '../components/ui/Text';
+import { useT } from '../i18n';
 import { withAlpha } from '../theme/colorUtils';
 import { spacing } from '../theme/spacing';
 import { useTheme } from '../theme/useTheme';
 
-const CONTROLS: { icon: IconName; title: string; body: string }[] = [
-  {
-    icon: 'gesture-swipe-horizontal',
-    title: 'Move',
-    body: 'Drag left or right anywhere below the score. The piece follows your finger.',
-  },
-  {
-    icon: 'gesture-tap',
-    title: 'Rotate',
-    body: 'Tap the right half to turn clockwise, the left half to turn the other way.',
-  },
-  { icon: 'gesture-swipe-down', title: 'Soft drop', body: 'Drag down slowly. +1 per row.' },
-  {
-    icon: 'arrow-collapse-down',
-    title: 'Hard drop',
-    body: 'Flick down to slam the piece and lock it. +2 per row.',
-  },
-  {
-    icon: 'gesture-swipe-up',
-    title: 'Hold',
-    body: 'Swipe up to save the piece for later. Once per piece.',
-  },
-  {
-    icon: 'view-sequential',
-    title: 'Clear lines',
-    body: 'Fill a row to clear it. Every 10 lines speeds up the game.',
-  },
-  {
-    icon: 'timer-sand',
-    title: 'Zone',
-    body: 'Clears charge the Zone meter. Tap Zone once it is half full: gravity stops, cleared lines pile up at the bottom, and when time runs out they all burst at once.',
-  },
-  {
-    icon: 'dna',
-    title: 'Modes',
-    body: 'Sprint and Dig race the clock. Ultra and Daily give you a few minutes. Cascade lets loose blocks fall into chains. Mutators bend a rule every level.',
-  },
-];
-
-const SCORES: [string, string][] = [
-  ['Single', '100'],
-  ['Double', '300'],
-  ['Triple', '500'],
-  ['Tetris', '800'],
+/** One icon per entry of `howToPlay.items`, in the same order. */
+const ICONS: IconName[] = [
+  'chevron-left',
+  'rotate-right',
+  'gesture-swipe-down',
+  'arrow-collapse-down',
+  'gesture-swipe-up',
+  'view-sequential',
+  'timer-sand',
+  'dna',
 ];
 
 interface Props {
@@ -61,15 +28,16 @@ interface Props {
 
 export const HowToPlayScreen = ({ onBack }: Props) => {
   const { colors } = useTheme();
+  const t = useT();
   const card = { fill: withAlpha(colors.surface, 0.92), stroke: colors.line };
   return (
     <Screen>
-      <ScreenHeader title="How to play" onBack={onBack} />
+      <ScreenHeader title={t.howToPlay.title} onBack={onBack} />
       <ScrollView contentContainerStyle={styles.content}>
-        {CONTROLS.map(({ icon, title, body }) => (
+        {t.howToPlay.items.map(([title, body], index) => (
           <Chamfer key={title} cut={10} {...card} style={styles.item}>
             <Chamfer cut={6} fill={colors.surfaceRaised} style={styles.iconWrap}>
-              <Icon name={icon} size={24} color={colors.primary} />
+              <Icon name={ICONS[index]} size={24} color={colors.primary} />
             </Chamfer>
             <View style={styles.itemText}>
               <Text variant="heading">{title}</Text>
@@ -82,9 +50,9 @@ export const HowToPlayScreen = ({ onBack }: Props) => {
 
         <Chamfer cut={12} {...card} style={styles.scoreCard}>
           <Text variant="label" color={colors.textDim}>
-            Points × level
+            {t.howToPlay.pointsTitle}
           </Text>
-          {SCORES.map(([name, points]) => (
+          {t.howToPlay.points.map(([name, points]) => (
             <View key={name} style={styles.scoreRow}>
               <Text variant="body">{name}</Text>
               <Text variant="stat" color={colors.primary}>
@@ -93,8 +61,7 @@ export const HowToPlayScreen = ({ onBack }: Props) => {
             </View>
           ))}
           <Text variant="caption" color={colors.textDim}>
-            A Tetris straight after another scores half again. Clearing on consecutive pieces builds
-            a combo bonus.
+            {t.howToPlay.pointsNote}
           </Text>
         </Chamfer>
       </ScrollView>

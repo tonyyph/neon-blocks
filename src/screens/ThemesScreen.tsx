@@ -9,6 +9,7 @@ import { ScreenHeader } from '../components/ui/ScreenHeader';
 import { Text } from '../components/ui/Text';
 import type { PieceType } from '../game/types';
 import { haptics } from '../hooks/useHaptics';
+import { useT } from '../i18n';
 import { useSettingsStore } from '../store/settingsStore';
 import { spacing } from '../theme/spacing';
 import { THEMES, THEME_ORDER, type Theme } from '../theme/themes';
@@ -62,11 +63,13 @@ const ThemeCard = ({
   onSelect: () => void;
 }) => {
   const { colors } = theme;
+  const t = useT();
+  const name = t.themes.names[theme.id];
   return (
     <PressableScale
       accessibilityRole="button"
       accessibilityState={{ selected: active }}
-      accessibilityLabel={`${theme.name} theme${active ? ', active' : ''}`}
+      accessibilityLabel={t.themes.cardA11y(name, active)}
       onPress={onSelect}
       pressedScale={0.97}
     >
@@ -86,23 +89,26 @@ const ThemeCard = ({
         <View style={styles.cardText}>
           <RNText
             allowFontScaling={false}
-            style={[getTextStyle('heading', theme), { color: colors.primary }]}
+            style={[getTextStyle('heading', theme, name), { color: colors.primary }]}
           >
-            {theme.name}
+            {name}
           </RNText>
           <RNText
             allowFontScaling={false}
-            style={[getTextStyle('caption', theme), { color: colors.textDim }]}
+            style={[
+              getTextStyle('caption', theme, t.themes.taglines[theme.id]),
+              { color: colors.textDim },
+            ]}
           >
-            {theme.tagline}
+            {t.themes.taglines[theme.id]}
           </RNText>
           {active ? (
             <Chamfer cut={5} shape={theme.shape} fill={colors.primary} style={styles.badge}>
               <RNText
                 allowFontScaling={false}
-                style={[getTextStyle('label', theme), { color: colors.onPrimary }]}
+                style={[getTextStyle('label', theme, t.themes.inUse), { color: colors.onPrimary }]}
               >
-                In use
+                {t.themes.inUse}
               </RNText>
             </Chamfer>
           ) : null}
@@ -121,17 +127,18 @@ const COLLECTIONS = ['Cyberpunk', 'Crafted'] as const;
 
 export const ThemesScreen = ({ onBack }: Props) => {
   const { colors } = useTheme();
+  const t = useT();
   const themeId = useSettingsStore((store) => store.settings.themeId);
   const update = useSettingsStore((store) => store.update);
 
   return (
     <Screen>
-      <ScreenHeader title="Themes" onBack={onBack} />
+      <ScreenHeader title={t.themes.title} onBack={onBack} />
       <ScrollView contentContainerStyle={styles.list}>
         {COLLECTIONS.map((collection) => (
           <View key={collection} style={styles.section}>
             <Text variant="label" color={colors.textDim}>
-              {collection}
+              {t.themes.collections[collection]}
             </Text>
             {THEME_ORDER.filter((id) => THEMES[id].collection === collection).map((id) => (
               <ThemeCard

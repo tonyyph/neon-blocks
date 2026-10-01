@@ -9,17 +9,18 @@ import Animated, {
 
 import type { ClearSummary } from '../../game/types';
 import { getZoneName } from '../../game/zone';
+import { formatNumber, useT } from '../../i18n';
 import { useGameStore } from '../../store/gameStore';
 import { withAlpha } from '../../theme/colorUtils';
 import { useTheme } from '../../theme/useTheme';
 import { GlitchText } from '../ui/GlitchText';
 import { Text } from '../ui/Text';
 
-const CLEAR_NAMES = ['', 'SINGLE', 'DOUBLE', 'TRIPLE', 'TETRIS'];
 const DURATION_MS = 1100;
 
 const Callout = ({ summary }: { summary: ClearSummary }) => {
   const { colors } = useTheme();
+  const t = useT();
   const progress = useSharedValue(0);
   useEffect(() => {
     progress.set(withTiming(1, { duration: DURATION_MS }));
@@ -35,8 +36,8 @@ const Callout = ({ summary }: { summary: ClearSummary }) => {
 
   const isTetris = summary.lines === 4 && !summary.zone;
   const headline = summary.zone
-    ? (getZoneName(summary.lines) ?? `${summary.lines} lines`)
-    : CLEAR_NAMES[summary.lines];
+    ? (getZoneName(summary.lines) ?? t.game.zoneLines(summary.lines))
+    : t.game.clears[summary.lines];
   const big = isTetris || summary.zone;
   return (
     <Animated.View
@@ -48,7 +49,7 @@ const Callout = ({ summary }: { summary: ClearSummary }) => {
     >
       {summary.zone ? (
         <Text variant="label" color={colors.secondary}>
-          Zone
+          {t.game.zone}
         </Text>
       ) : null}
       {big ? (
@@ -62,21 +63,21 @@ const Callout = ({ summary }: { summary: ClearSummary }) => {
       )}
       {summary.chain > 1 ? (
         <Text variant="label" color={colors.danger}>
-          {`Chain ×${summary.chain}`}
+          {t.game.chain(summary.chain)}
         </Text>
       ) : null}
       {summary.backToBack ? (
         <Text variant="label" color={colors.secondary}>
-          Back-to-back
+          {t.game.backToBack}
         </Text>
       ) : null}
       {summary.combo > 0 ? (
         <Text variant="label" color={colors.success}>
-          {`Combo ×${summary.combo}`}
+          {t.game.combo(summary.combo)}
         </Text>
       ) : null}
       <Text variant="caption" color={colors.textDim}>
-        {`+${summary.points.toLocaleString()}`}
+        {`+${formatNumber(summary.points, t)}`}
       </Text>
     </Animated.View>
   );

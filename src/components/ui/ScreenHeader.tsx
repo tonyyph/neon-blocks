@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
 import { MIN_TOUCH, spacing } from '../../theme/spacing';
+import { useT } from '../../i18n';
 import { useTheme } from '../../theme/useTheme';
 import { Chamfer } from './Chamfer';
 import { Icon } from './Icon';
@@ -14,11 +15,12 @@ interface Props {
 
 export const ScreenHeader = ({ title, onBack }: Props) => {
   const { colors } = useTheme();
+  const t = useT();
   return (
     <View style={styles.header}>
       <PressableScale
         accessibilityRole="button"
-        accessibilityLabel="Back"
+        accessibilityLabel={t.common.back}
         onPress={onBack}
         hitSlop={8}
       >

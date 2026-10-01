@@ -10,6 +10,7 @@ import { Screen } from '../components/ui/Screen';
 import { ScreenHeader } from '../components/ui/ScreenHeader';
 import { Text } from '../components/ui/Text';
 import { haptics } from '../hooks/useHaptics';
+import { LANGUAGES, LANGUAGE_NAMES, useT } from '../i18n';
 import { useSettingsStore } from '../store/settingsStore';
 import { useStatsStore } from '../store/statsStore';
 import { withAlpha } from '../theme/colorUtils';
@@ -18,11 +19,51 @@ import { useTheme } from '../theme/useTheme';
 
 type ToggleKey = 'soundEnabled' | 'hapticsEnabled' | 'ghostEnabled';
 
-const TOGGLES: { key: ToggleKey; label: string; hint: string }[] = [
-  { key: 'soundEnabled', label: 'Sound effects', hint: 'Follows the device silent switch' },
-  { key: 'hapticsEnabled', label: 'Haptics', hint: 'Light vibration on moves and clears' },
-  { key: 'ghostEnabled', label: 'Ghost piece', hint: 'Show where the piece will land' },
+/** Each toggle's label and hint come from the dictionary under these keys. */
+const TOGGLES: { key: ToggleKey; label: 'sound' | 'haptics' | 'ghost' }[] = [
+  { key: 'soundEnabled', label: 'sound' },
+  { key: 'hapticsEnabled', label: 'haptics' },
+  { key: 'ghostEnabled', label: 'ghost' },
 ];
+
+/** Two-way choice of language, each option written in its own language. */
+const LanguagePicker = () => {
+  const { colors } = useTheme();
+  const language = useSettingsStore((store) => store.settings.language);
+  const update = useSettingsStore((store) => store.update);
+  return (
+    <View style={styles.segments} accessibilityRole="radiogroup">
+      {LANGUAGES.map((option) => {
+        const selected = option === language;
+        return (
+          <View key={option} style={styles.segment}>
+            <PressableScale
+              accessibilityRole="radio"
+              accessibilityState={{ selected }}
+              onPress={() => {
+                if (selected) return;
+                haptics.tap();
+                update({ language: option });
+              }}
+              pressedScale={0.96}
+            >
+              <Chamfer
+                cut={8}
+                fill={selected ? colors.primary : colors.surfaceRaised}
+                stroke={selected ? colors.primary : colors.line}
+                style={styles.segmentInner}
+              >
+                <Text variant="body" color={selected ? colors.onPrimary : colors.text}>
+                  {LANGUAGE_NAMES[option]}
+                </Text>
+              </Chamfer>
+            </PressableScale>
+          </View>
+        );
+      })}
+    </View>
+  );
+};
 
 const Group = ({ children }: { children: ReactNode }) => {
   const { colors } = useTheme();
@@ -45,44 +86,49 @@ interface Props {
 
 export const SettingsScreen = ({ onBack, onOpenThemes }: Props) => {
   const theme = useTheme();
+  const t = useT();
   const { colors } = theme;
+  const themeName = t.themes.names[theme.id];
   const settings = useSettingsStore((store) => store.settings);
   const update = useSettingsStore((store) => store.update);
   const resetProgress = useStatsStore((store) => store.resetProgress);
 
   const confirmReset = () =>
-    Alert.alert(
-      'Reset all progress?',
-      'Records, Daily history, stats and awards will be erased. This cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Reset',
-          style: 'destructive',
-          onPress: () => {
-            resetProgress();
-            haptics.success();
-          },
+    Alert.alert(t.settings.resetTitle, t.settings.resetBody, [
+      { text: t.common.cancel, style: 'cancel' },
+      {
+        text: t.settings.resetConfirm,
+        style: 'destructive',
+        onPress: () => {
+          resetProgress();
+          haptics.success();
         },
-      ],
-    );
+      },
+    ]);
 
   return (
     <Screen>
-      <ScreenHeader title="Settings" onBack={onBack} />
+      <ScreenHeader title={t.settings.title} onBack={onBack} />
       <ScrollView contentContainerStyle={styles.content}>
+        <Group>
+          <View style={styles.languageRow}>
+            <Text variant="body">{t.settings.language}</Text>
+            <LanguagePicker />
+          </View>
+        </Group>
+
         <PressableScale
           accessibilityRole="button"
-          accessibilityLabel={`Theme: ${theme.name}. Change theme`}
+          accessibilityLabel={t.settings.themeA11y(themeName)}
           onPress={onOpenThemes}
           pressedScale={0.97}
         >
           <Group>
             <View style={styles.row}>
               <View style={styles.rowText}>
-                <Text variant="body">Theme</Text>
+                <Text variant="body">{t.settings.theme}</Text>
                 <Text variant="caption" color={colors.primary}>
-                  {theme.name}
+                  {themeName}
                 </Text>
               </View>
               <Icon name="chevron-right" size={24} color={colors.textDim} />
@@ -91,19 +137,19 @@ export const SettingsScreen = ({ onBack, onOpenThemes }: Props) => {
         </PressableScale>
 
         <Group>
-          {TOGGLES.map(({ key, label, hint }, index) => (
+          {TOGGLES.map(({ key, label }, index) => (
             <View
               key={key}
               style={[styles.row, index > 0 && { ...styles.divider, borderTopColor: colors.line }]}
             >
               <View style={styles.rowText}>
-                <Text variant="body">{label}</Text>
+                <Text variant="body">{t.settings[label]}</Text>
                 <Text variant="caption" color={colors.textDim}>
-                  {hint}
+                  {t.settings[`${label}Hint`]}
                 </Text>
               </View>
               <Switch
-                accessibilityLabel={label}
+                accessibilityLabel={t.settings[label]}
                 value={settings[key]}
                 onValueChange={(value) => {
                   update({ [key]: value });
@@ -120,16 +166,16 @@ export const SettingsScreen = ({ onBack, onOpenThemes }: Props) => {
         <Group>
           <View style={styles.row}>
             <View style={styles.rowText}>
-              <Text variant="body">Controls</Text>
+              <Text variant="body">{t.settings.controls}</Text>
               <Text variant="caption" color={colors.textDim}>
-                Touch gestures. See How to play.
+                {t.settings.controlsHint}
               </Text>
             </View>
           </View>
         </Group>
 
         <Button
-          label="Reset progress"
+          label={t.settings.reset}
           icon="delete-outline"
           variant="danger"
           onPress={confirmReset}
@@ -137,10 +183,10 @@ export const SettingsScreen = ({ onBack, onOpenThemes }: Props) => {
 
         <View style={styles.footer}>
           <Text variant="caption" color={colors.textFaint}>
-            {`Neon Blocks ${Constants.expoConfig?.version ?? ''}`}
+            {t.settings.version(Constants.expoConfig?.version ?? '')}
           </Text>
           <Text variant="caption" color={colors.textFaint} style={styles.center}>
-            Plays fully offline. No account, no ads, no tracking. Nothing leaves your device.
+            {t.settings.privacy}
           </Text>
         </View>
       </ScrollView>
@@ -161,6 +207,10 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   divider: { borderTopWidth: StyleSheet.hairlineWidth },
+  languageRow: { paddingVertical: spacing.md, gap: spacing.sm },
+  segments: { flexDirection: 'row', gap: spacing.sm },
+  segment: { flex: 1 },
+  segmentInner: { minHeight: 44, alignItems: 'center', justifyContent: 'center' },
   rowText: { flex: 1, gap: 2 },
   footer: { alignItems: 'center', gap: spacing.xs, marginTop: spacing.sm },
   center: { textAlign: 'center' },

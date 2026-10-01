@@ -39,8 +39,6 @@ export interface PieceShades {
 
 interface ThemeSpec {
   id: ThemeId;
-  name: string;
-  tagline: string;
   /** Section the theme is listed under in the picker. */
   collection: 'Cyberpunk' | 'Crafted';
   shape: PanelShape;
@@ -111,8 +109,6 @@ const SPECS: ThemeSpec[] = [
   {
     id: 'nightCity',
     ...CYBER_LOOK,
-    name: 'Night City',
-    tagline: 'Hazard yellow on black. Hollow neon tubes.',
     colors: {
       background: '#050508',
       backgroundAlt: '#16060C',
@@ -148,8 +144,6 @@ const SPECS: ThemeSpec[] = [
   {
     id: 'neonRain',
     ...CYBER_LOOK,
-    name: 'Neon Rain',
-    tagline: 'Magenta signs through wet glass.',
     colors: {
       background: '#0A0620',
       backgroundAlt: '#1E0B3F',
@@ -185,8 +179,6 @@ const SPECS: ThemeSpec[] = [
   {
     id: 'outrun',
     ...CYBER_LOOK,
-    name: 'Outrun',
-    tagline: 'A violet dusk and a grid to the horizon.',
     colors: {
       background: '#1A0933',
       backgroundAlt: '#4A0D4E',
@@ -222,8 +214,6 @@ const SPECS: ThemeSpec[] = [
   {
     id: 'amberTerminal',
     ...CYBER_LOOK,
-    name: 'Amber Terminal',
-    tagline: 'A netrunner’s phosphor screen.',
     colors: {
       background: '#0B0703',
       backgroundAlt: '#1A0F04',
@@ -264,8 +254,6 @@ const SPECS: ThemeSpec[] = [
   },
   {
     id: 'blueprint',
-    name: 'Blueprint',
-    tagline: 'Pencil lines on drafting film. Every block a technical drawing.',
     collection: 'Crafted',
     shape: 'square',
     titleEffect: 'plain',
@@ -312,8 +300,6 @@ const SPECS: ThemeSpec[] = [
   },
   {
     id: 'sugarRush',
-    name: 'Sugar Rush',
-    tagline: 'A box of jelly sweets on a strawberry-milk table.',
     collection: 'Crafted',
     shape: 'round',
     titleEffect: 'pop',
@@ -360,8 +346,6 @@ const SPECS: ThemeSpec[] = [
   },
   {
     id: 'kintsugi',
-    name: 'Kintsugi',
-    tagline: 'Black lacquer, mended with gold.',
     collection: 'Crafted',
     shape: 'notch',
     titleEffect: 'plain',
@@ -408,8 +392,6 @@ const SPECS: ThemeSpec[] = [
   },
   {
     id: 'cathedral',
-    name: 'Cathedral',
-    tagline: 'Jewel-bright glass set in lead.',
     collection: 'Crafted',
     shape: 'arch',
     titleEffect: 'plain',

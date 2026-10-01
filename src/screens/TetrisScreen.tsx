@@ -20,6 +20,7 @@ import { Text } from '../components/ui/Text';
 import { BOARD_WIDTH, VISIBLE_ROWS } from '../game/constants';
 import { MODES, type ModeConfig } from '../game/modes';
 import { useGameLoop } from '../hooks/useGameLoop';
+import { useT } from '../i18n';
 import { useGameEventHaptics } from '../hooks/useHaptics';
 import { useGestureControls } from '../hooks/useGestureControls';
 import { useRecordGameOver } from '../hooks/useRecordGameOver';
@@ -74,11 +75,13 @@ const ScoreReadout = () => {
 /** The line under the main readout: what is left to do, or how long is left. */
 const GoalLine = ({ config }: { config: ModeConfig }) => {
   const { colors } = useTheme();
+  const t = useT();
   const text = useGameStore(({ game }) => {
-    if (config.lineGoal !== null) return `${Math.max(0, config.lineGoal - game.lines)} lines to go`;
-    if (config.garbageRows > 0) return `${game.garbageLeft} garbage rows left`;
+    if (config.lineGoal !== null)
+      return t.game.linesToGo(Math.max(0, config.lineGoal - game.lines));
+    if (config.garbageRows > 0) return t.game.garbageLeft(game.garbageLeft);
     if (config.timeLimitMs !== null) {
-      return `${formatCountdown(config.timeLimitMs - game.elapsedMs)} left`;
+      return t.game.timeLeft(formatCountdown(config.timeLimitMs - game.elapsedMs));
     }
     return null;
   });
@@ -103,6 +106,7 @@ const ModeChip = ({ name }: { name: string }) => {
 
 const Header = () => {
   const { colors } = useTheme();
+  const t = useT();
   const mode = useGameStore((store) => store.game.mode);
   const config = MODES[mode];
   const racing = config.record === 'time';
@@ -110,7 +114,7 @@ const Header = () => {
     <View style={styles.header}>
       <PressableScale
         accessibilityRole="button"
-        accessibilityLabel="Pause"
+        accessibilityLabel={t.game.pause}
         hitSlop={8}
         onPress={() => dispatchGame({ type: 'pause' })}
       >
@@ -120,13 +124,13 @@ const Header = () => {
       </PressableScale>
       <View style={styles.scoreBlock}>
         <Text variant="label" color={colors.textDim}>
-          {racing ? 'Time' : 'Score'}
+          {racing ? t.common.time : t.common.score}
         </Text>
         {racing ? <ElapsedClock /> : <ScoreReadout />}
         <GoalLine config={config} />
       </View>
       <View style={styles.right}>
-        {config.zone ? <ZoneButton /> : <ModeChip name={config.name} />}
+        {config.zone ? <ZoneButton /> : <ModeChip name={t.modes.names[mode]} />}
       </View>
     </View>
   );
@@ -135,19 +139,20 @@ const Header = () => {
 /** Level and lines, compact, at the end of the preview strip. */
 const LevelLines = () => {
   const { colors } = useTheme();
+  const t = useT();
   const level = useGameStore((store) => store.game.level);
   const lines = useGameStore((store) => store.game.lines);
   return (
     <Panel style={styles.levelPanel}>
       <View style={styles.metaRow}>
         <Text variant="label" color={colors.textDim}>
-          Lv
+          {t.common.levelShort}
         </Text>
         <Readout value={level} digits={2} variant="stat" color={colors.text} />
       </View>
       <View style={styles.metaRow}>
         <Text variant="label" color={colors.textDim}>
-          Ln
+          {t.common.linesShort}
         </Text>
         <Readout value={lines} digits={3} variant="stat" color={colors.text} />
       </View>
@@ -161,6 +166,7 @@ interface Props {
 }
 
 export const TetrisScreen = ({ onOpenSettings, onExitToMenu }: Props) => {
+  const t = useT();
   useGameLoop();
   useSoundEffects();
   useGameEventHaptics();
@@ -188,10 +194,7 @@ export const TetrisScreen = ({ onOpenSettings, onExitToMenu }: Props) => {
       <Header />
       {/* Everything below the header is one touch surface; see useGestureControls. */}
       <GestureDetector gesture={gesture}>
-        <View
-          style={styles.touchArea}
-          accessibilityHint="Drag to move, tap to rotate, flick down to drop, swipe up to hold"
-        >
+        <View style={styles.touchArea} accessibilityHint={t.game.touchHint}>
           <View style={styles.playfield} onLayout={onPlayfieldLayout}>
             {layout ? (
               <View style={styles.stack}>

@@ -2,6 +2,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { ZONE_FULL_DURATION_MS, ZONE_MIN_METER } from '../../game/zone';
 import { haptics } from '../../hooks/useHaptics';
+import { useT } from '../../i18n';
 import { dispatchGame, useGameStore } from '../../store/gameStore';
 import { withAlpha } from '../../theme/colorUtils';
 import { MIN_TOUCH } from '../../theme/spacing';
@@ -18,6 +19,7 @@ const WIDTH = 76;
  */
 export const ZoneButton = () => {
   const { colors } = useTheme();
+  const t = useT();
   const meter = useGameStore((store) => store.game.zone.meter);
   const active = useGameStore((store) => store.game.zone.active);
   const seconds = useGameStore((store) => Math.ceil(store.game.zone.remainingMs / 1000));
@@ -27,16 +29,14 @@ export const ZoneButton = () => {
   );
   const ready = !active && meter >= ZONE_MIN_METER;
 
-  const label = active ? `${seconds}s` : 'Zone';
+  const label = active ? t.game.zoneSeconds(seconds) : t.game.zone;
   const accent = active ? colors.secondary : ready ? colors.primary : colors.textFaint;
 
   return (
     <PressableScale
       accessibilityRole="button"
       accessibilityLabel={
-        active
-          ? `Zone active, ${seconds} seconds left`
-          : `Zone, ${Math.round(meter * 100)}% charged`
+        active ? t.game.zoneActiveA11y(seconds) : t.game.zoneChargeA11y(Math.round(meter * 100))
       }
       accessibilityState={{ disabled: !ready }}
       disabled={!ready}

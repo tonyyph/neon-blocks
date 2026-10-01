@@ -6,8 +6,9 @@ import { PressableScale } from '../components/ui/PressableScale';
 import { Screen } from '../components/ui/Screen';
 import { ScreenHeader } from '../components/ui/ScreenHeader';
 import { Text } from '../components/ui/Text';
-import { MODES, MODE_ORDER, MUTATOR_INFO, dailyMutator, toDateKey } from '../game/modes';
+import { MODES, MODE_ORDER, dailyMutator, toDateKey } from '../game/modes';
 import type { GameMode } from '../game/types';
+import { type Strings, formatDay, formatNumber, useT } from '../i18n';
 import { currentStreak } from '../progress/records';
 import type { ModeRecord } from '../progress/types';
 import { useStatsStore } from '../store/statsStore';
@@ -27,26 +28,31 @@ const ICONS: Record<GameMode, IconName> = {
 };
 
 /** The record line under a mode: best score or best time, or an invitation if never played. */
-const recordLine = (mode: GameMode, record: ModeRecord | undefined): string => {
-  if (!record?.plays) return 'Not played yet';
+const recordLine = (mode: GameMode, record: ModeRecord | undefined, t: Strings): string => {
+  if (!record?.plays) return t.modes.notPlayed;
   if (MODES[mode].record === 'time') {
-    return record.bestTimeMs != null ? `Best ${formatTime(record.bestTimeMs)}` : 'Not finished yet';
+    return record.bestTimeMs != null
+      ? t.modes.best(formatTime(record.bestTimeMs))
+      : t.modes.notFinished;
   }
-  return `Best ${record.bestScore.toLocaleString()}`;
+  return t.modes.best(formatNumber(record.bestScore, t));
 };
 
 const DailyCard = ({ onPlay }: { onPlay: () => void }) => {
   const { colors } = useTheme();
+  const t = useT();
   const today = toDateKey(new Date());
   const daily = useStatsStore((store) => store.progress.daily);
   const todayScore = daily.results[today];
   const streak = currentStreak(daily, today);
-  const twist = MUTATOR_INFO[dailyMutator(today)];
+  const twist = dailyMutator(today);
+  const twistName = t.mutators.names[twist];
+  const day = formatDay(today, t);
 
   return (
     <PressableScale
       accessibilityRole="button"
-      accessibilityLabel={`Daily challenge, ${today}. Twist: ${twist.name}.`}
+      accessibilityLabel={t.daily.a11y(day, twistName)}
       onPress={onPlay}
       pressedScale={0.97}
     >
@@ -61,10 +67,10 @@ const DailyCard = ({ onPlay }: { onPlay: () => void }) => {
           <Icon name="calendar-star" size={26} color={colors.primary} />
           <View style={styles.flex}>
             <Text variant="heading" color={colors.primary}>
-              Daily challenge
+              {t.daily.title}
             </Text>
             <Text variant="caption" color={colors.textDim}>
-              {`${today} · twist: ${twist.name}`}
+              {t.daily.subtitle(day, twistName)}
             </Text>
           </View>
           {streak > 0 ? (
@@ -78,8 +84,8 @@ const DailyCard = ({ onPlay }: { onPlay: () => void }) => {
         </View>
         <Text variant="caption" color={colors.text}>
           {todayScore === undefined
-            ? `${MODES.daily.summary} ${twist.hint} Your first run today is the one that counts.`
-            : `Today's score: ${todayScore.toLocaleString()}. Play again for practice.`}
+            ? t.daily.intro(t.modes.summaries.daily, t.mutators.hints[twist])
+            : t.daily.played(formatNumber(todayScore, t))}
         </Text>
       </Chamfer>
     </PressableScale>
@@ -93,20 +99,22 @@ interface Props {
 
 export const ModeSelectScreen = ({ onBack, onPlay }: Props) => {
   const { colors } = useTheme();
+  const t = useT();
   const records = useStatsStore((store) => store.progress.records);
 
   return (
     <Screen>
-      <ScreenHeader title="Play" onBack={onBack} />
+      <ScreenHeader title={t.modes.title} onBack={onBack} />
       <ScrollView contentContainerStyle={styles.list}>
         <DailyCard onPlay={() => onPlay('daily')} />
         {MODE_ORDER.map((mode) => {
-          const config = MODES[mode];
+          const name = t.modes.names[mode];
+          const summary = t.modes.summaries[mode];
           return (
             <PressableScale
               key={mode}
               accessibilityRole="button"
-              accessibilityLabel={`${config.name}. ${config.summary}`}
+              accessibilityLabel={`${name}. ${summary}`}
               onPress={() => onPlay(mode)}
               pressedScale={0.97}
             >
@@ -120,13 +128,13 @@ export const ModeSelectScreen = ({ onBack, onPlay }: Props) => {
                   <Icon name={ICONS[mode]} size={24} color={colors.primary} />
                 </Chamfer>
                 <View style={styles.flex}>
-                  <Text variant="heading">{config.name}</Text>
+                  <Text variant="heading">{name}</Text>
                   <Text variant="caption" color={colors.textDim}>
-                    {config.summary}
+                    {summary}
                   </Text>
                 </View>
                 <Text variant="caption" color={colors.secondary} style={styles.record}>
-                  {recordLine(mode, records[mode])}
+                  {recordLine(mode, records[mode], t)}
                 </Text>
               </Chamfer>
             </PressableScale>

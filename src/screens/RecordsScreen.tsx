@@ -6,6 +6,7 @@ import { Screen } from '../components/ui/Screen';
 import { ScreenHeader } from '../components/ui/ScreenHeader';
 import { Text } from '../components/ui/Text';
 import { MODES, MODE_ORDER } from '../game/modes';
+import { type Strings, formatNumber, useT } from '../i18n';
 import { piecesPerSecond } from '../progress/types';
 import { useStatsStore } from '../store/statsStore';
 import { withAlpha } from '../theme/colorUtils';
@@ -49,21 +50,24 @@ const formatDate = (epochMs: number) => {
   return `${date.getDate()}/${date.getMonth() + 1}`;
 };
 
-const formatHours = (ms: number) => {
+const formatHours = (ms: number, t: Strings) => {
   const minutes = Math.round(ms / 60_000);
-  return minutes < 60 ? `${minutes} min` : `${Math.floor(minutes / 60)} h ${minutes % 60} min`;
+  return minutes < 60
+    ? t.records.minutes(minutes)
+    : t.records.hours(Math.floor(minutes / 60), minutes % 60);
 };
 
 export const RecordsScreen = ({ onBack }: { onBack: () => void }) => {
   const { colors } = useTheme();
+  const t = useT();
   const progress = useStatsStore((store) => store.progress);
   const { totals, records, daily, recent } = progress;
 
   return (
     <Screen>
-      <ScreenHeader title="Records" onBack={onBack} />
+      <ScreenHeader title={t.records.title} onBack={onBack} />
       <ScrollView contentContainerStyle={styles.list}>
-        <Section title="Best by mode">
+        <Section title={t.records.byMode}>
           {[...MODE_ORDER, 'daily' as const].map((mode) => {
             const record = records[mode];
             const config = MODES[mode];
@@ -72,37 +76,42 @@ export const RecordsScreen = ({ onBack }: { onBack: () => void }) => {
               : config.record === 'time'
                 ? record.bestTimeMs != null
                   ? formatTime(record.bestTimeMs)
-                  : 'DNF'
-                : record.bestScore.toLocaleString();
-            return <Row key={mode} label={config.name} value={value} dim={!record?.plays} />;
+                  : t.records.notFinished
+                : formatNumber(record.bestScore, t);
+            return (
+              <Row key={mode} label={t.modes.names[mode]} value={value} dim={!record?.plays} />
+            );
           })}
         </Section>
 
-        <Section title="Daily">
-          <Row label="Current streak" value={`${daily.streak}`} />
-          <Row label="Best streak" value={`${daily.bestStreak}`} />
-          <Row label="Days played" value={`${Object.keys(daily.results).length}`} />
+        <Section title={t.records.daily}>
+          <Row label={t.records.streak} value={`${daily.streak}`} />
+          <Row label={t.records.bestStreak} value={`${daily.bestStreak}`} />
+          <Row label={t.records.daysPlayed} value={`${Object.keys(daily.results).length}`} />
         </Section>
 
-        <Section title="All time">
-          <Row label="Games" value={totals.games.toLocaleString()} />
-          <Row label="Lines" value={totals.lines.toLocaleString()} />
-          <Row label="Tetrises" value={totals.tetrises.toLocaleString()} />
-          <Row label="Pieces" value={totals.pieces.toLocaleString()} />
+        <Section title={t.records.allTime}>
+          <Row label={t.records.games} value={formatNumber(totals.games, t)} />
+          <Row label={t.records.lines} value={formatNumber(totals.lines, t)} />
+          <Row label={t.records.tetrises} value={formatNumber(totals.tetrises, t)} />
+          <Row label={t.records.pieces} value={formatNumber(totals.pieces, t)} />
           <Row
-            label="Pieces per second"
-            value={piecesPerSecond(totals.pieces, totals.playTimeMs).toFixed(2)}
+            label={t.records.pps}
+            value={piecesPerSecond(totals.pieces, totals.playTimeMs).toLocaleString(t.locale, {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}
           />
-          <Row label="Longest combo" value={`${totals.maxCombo}`} />
-          <Row label="Longest chain" value={`${totals.maxChain}`} />
-          <Row label="Biggest Zone" value={`${totals.maxZoneLines} lines`} />
-          <Row label="Time played" value={formatHours(totals.playTimeMs)} />
+          <Row label={t.records.longestCombo} value={`${totals.maxCombo}`} />
+          <Row label={t.records.longestChain} value={`${totals.maxChain}`} />
+          <Row label={t.records.biggestZone} value={t.records.zoneLines(totals.maxZoneLines)} />
+          <Row label={t.records.timePlayed} value={formatHours(totals.playTimeMs, t)} />
         </Section>
 
-        <Section title="Recent games">
+        <Section title={t.records.recent}>
           {recent.length === 0 ? (
             <Text variant="caption" color={colors.textDim}>
-              Finish a game and it shows up here.
+              {t.records.recentEmpty}
             </Text>
           ) : (
             recent.map((game) => {
@@ -110,8 +119,8 @@ export const RecordsScreen = ({ onBack }: { onBack: () => void }) => {
               return (
                 <Row
                   key={`${game.finishedAt}-${game.mode}`}
-                  label={`${formatDate(game.finishedAt)}  ${MODES[game.mode].name}`}
-                  value={timed ? formatTime(game.timeMs) : game.score.toLocaleString()}
+                  label={`${formatDate(game.finishedAt)}  ${t.modes.names[game.mode]}`}
+                  value={timed ? formatTime(game.timeMs) : formatNumber(game.score, t)}
                 />
               );
             })

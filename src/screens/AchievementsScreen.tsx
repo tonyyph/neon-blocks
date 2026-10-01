@@ -5,6 +5,7 @@ import { Icon } from '../components/ui/Icon';
 import { Screen } from '../components/ui/Screen';
 import { ScreenHeader } from '../components/ui/ScreenHeader';
 import { Text } from '../components/ui/Text';
+import { useT } from '../i18n';
 import { ACHIEVEMENTS } from '../progress/achievements';
 import { useStatsStore } from '../store/statsStore';
 import { withAlpha } from '../theme/colorUtils';
@@ -13,15 +14,16 @@ import { useTheme } from '../theme/useTheme';
 
 export const AchievementsScreen = ({ onBack }: { onBack: () => void }) => {
   const { colors } = useTheme();
+  const t = useT();
   const unlocked = useStatsStore((store) => store.progress.achievements);
   const earned = ACHIEVEMENTS.filter(({ id }) => unlocked[id]).length;
 
   return (
     <Screen>
-      <ScreenHeader title="Awards" onBack={onBack} />
+      <ScreenHeader title={t.awards.title} onBack={onBack} />
       <ScrollView contentContainerStyle={styles.list}>
         <Text variant="body" color={colors.textDim} style={styles.count}>
-          {`${earned} of ${ACHIEVEMENTS.length} earned`}
+          {t.awards.count(earned, ACHIEVEMENTS.length)}
         </Text>
         {ACHIEVEMENTS.map((achievement) => {
           const at = unlocked[achievement.id];
@@ -40,15 +42,15 @@ export const AchievementsScreen = ({ onBack }: { onBack: () => void }) => {
               />
               <View style={styles.text}>
                 <Text variant="heading" color={at ? colors.text : colors.textDim}>
-                  {achievement.name}
+                  {t.awards.items[achievement.id][0]}
                 </Text>
                 <Text variant="caption" color={colors.textDim}>
-                  {achievement.description}
+                  {t.awards.items[achievement.id][1]}
                 </Text>
               </View>
               {at ? (
                 <Text variant="caption" color={colors.textFaint}>
-                  {new Date(at).toLocaleDateString()}
+                  {new Date(at).toLocaleDateString(t.locale)}
                 </Text>
               ) : null}
             </Chamfer>

@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { MODES } from '../../game/modes';
+import { formatNumber, useT } from '../../i18n';
 import { useShareResult } from '../../hooks/useShareResult';
 import { ACHIEVEMENTS } from '../../progress/achievements';
 import { useGameStore } from '../../store/gameStore';
@@ -45,10 +46,9 @@ const Badge = ({ label, color }: { label: string; color: string }) => {
   );
 };
 
-const TITLES = { completed: 'Cleared', timeUp: 'Time', topOut: 'Game over' } as const;
-
 export const GameOverOverlay = ({ onRestart, onMenu }: Props) => {
   const theme = useTheme();
+  const t = useT();
   const { colors } = theme;
   const game = useGameStore((store) => store.game);
   const record = useStatsStore((store) => store.progress.records[game.mode]);
@@ -66,7 +66,7 @@ export const GameOverOverlay = ({ onRestart, onMenu }: Props) => {
     ? record?.bestTimeMs != null
       ? formatTime(record.bestTimeMs)
       : '–'
-    : (record?.bestScore ?? game.score).toLocaleString();
+    : formatNumber(record?.bestScore ?? game.score, t);
   const accent = result === 'completed' || outcome?.isRecord ? colors.success : colors.danger;
   const unlocked = ACHIEVEMENTS.filter(({ id }) => outcome?.unlocked.includes(id));
 
@@ -80,21 +80,23 @@ export const GameOverOverlay = ({ onRestart, onMenu }: Props) => {
       >
         <View style={styles.center}>
           <Text variant="label" color={colors.textDim}>
-            {game.mode === 'daily' && game.dateKey ? `Daily · ${game.dateKey}` : config.name}
+            {game.mode === 'daily' && game.dateKey
+              ? t.gameOver.dailyLabel(game.dateKey)
+              : t.modes.names[game.mode]}
           </Text>
           <GlitchText
             variant="title"
             color={result === 'completed' ? colors.success : colors.danger}
           >
-            {TITLES[result]}
+            {t.gameOver.titles[result]}
           </GlitchText>
         </View>
 
         <View style={styles.badges}>
-          {outcome?.isRecord ? <Badge label="New record" color={colors.success} /> : null}
+          {outcome?.isRecord ? <Badge label={t.gameOver.newRecord} color={colors.success} /> : null}
           {game.mode === 'daily' && outcome ? (
             <Badge
-              label={outcome.isOfficialDaily ? "Today's score" : 'Practice run'}
+              label={outcome.isOfficialDaily ? t.gameOver.todaysScore : t.gameOver.practice}
               color={outcome.isOfficialDaily ? colors.primary : colors.textDim}
             />
           ) : null}
@@ -102,24 +104,24 @@ export const GameOverOverlay = ({ onRestart, onMenu }: Props) => {
 
         <View style={styles.center}>
           <Text variant="label" color={colors.textDim}>
-            {headline ? 'Time' : 'Score'}
+            {headline ? t.common.time : t.common.score}
           </Text>
           <Text
             variant="display"
             color={colors.primary}
             style={{ fontSize: 40, lineHeight: Math.ceil(40 * LINE_BOX[theme.fonts.display]) }}
           >
-            {headline ?? game.score.toLocaleString()}
+            {headline ?? formatNumber(game.score, t)}
           </Text>
         </View>
 
         <View style={styles.stats}>
-          <Stat label="Lines" value={String(game.lines)} />
+          <Stat label={t.common.lines} value={String(game.lines)} />
           <Stat
-            label={racing ? 'Score' : 'Level'}
-            value={racing ? game.score.toLocaleString() : String(game.level)}
+            label={racing ? t.common.score : t.common.level}
+            value={racing ? formatNumber(game.score, t) : String(game.level)}
           />
-          <Stat label="Best" value={best} />
+          <Stat label={t.common.best} value={best} />
         </View>
         <Text variant="caption" color={colors.textFaint} style={styles.brand}>
           Neon Blocks
@@ -132,20 +134,24 @@ export const GameOverOverlay = ({ onRestart, onMenu }: Props) => {
             <View key={achievement.id} style={styles.unlock}>
               <Icon name={achievement.icon} size={18} color={colors.primary} />
               <Text variant="caption" color={colors.text}>
-                {achievement.name}
+                {t.awards.items[achievement.id][0]}
               </Text>
             </View>
           ))}
         </View>
       ) : null}
 
-      <Button label="Play again" icon="restart" variant="primary" onPress={onRestart} />
+      <Button label={t.gameOver.playAgain} icon="restart" variant="primary" onPress={onRestart} />
       <View style={styles.row}>
         <View style={styles.half}>
-          <Button label={busy ? 'Sharing…' : 'Share'} icon="share-variant" onPress={share} />
+          <Button
+            label={busy ? t.gameOver.sharing : t.gameOver.share}
+            icon="share-variant"
+            onPress={share}
+          />
         </View>
         <View style={styles.half}>
-          <Button label="Menu" icon="home-outline" onPress={onMenu} />
+          <Button label={t.gameOver.menu} icon="home-outline" onPress={onMenu} />
         </View>
       </View>
     </OverlayCard>

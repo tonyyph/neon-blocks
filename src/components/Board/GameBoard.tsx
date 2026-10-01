@@ -13,8 +13,8 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { BOARD_WIDTH, HIDDEN_ROWS, LINE_CLEAR_MS, VISIBLE_ROWS } from '../../game/constants';
-import { MUTATOR_INFO } from '../../game/modes';
 import { getVisibleRowSignatures } from '../../game/selectors';
+import { useT } from '../../i18n';
 import type { Mutator } from '../../game/types';
 import { useGameStore } from '../../store/gameStore';
 import { useSettingsStore } from '../../store/settingsStore';
@@ -89,6 +89,7 @@ Row.displayName = 'Row';
 /** Names the rule currently in force, top-centre of the well. */
 const MutatorBadge = ({ mutator }: { mutator: Mutator }) => {
   const { colors } = useTheme();
+  const t = useT();
   return (
     <View pointerEvents="none" style={styles.badgeLayer}>
       <Chamfer
@@ -98,7 +99,7 @@ const MutatorBadge = ({ mutator }: { mutator: Mutator }) => {
         style={styles.badge}
       >
         <Text variant="label" color={colors.danger}>
-          {MUTATOR_INFO[mutator].name}
+          {t.mutators.names[mutator]}
         </Text>
       </Chamfer>
     </View>
@@ -111,6 +112,7 @@ interface Props {
 
 export const GameBoard = ({ cellSize }: Props) => {
   const theme = useTheme();
+  const t = useT();
   const board = useGameStore((store) => store.game.board);
   const active = useGameStore((store) => store.game.active);
   const clearingRows = useGameStore((store) => store.game.clearing?.rows ?? null);
@@ -155,7 +157,7 @@ export const GameBoard = ({ cellSize }: Props) => {
         { width: gridWidth + BOARD_FRAME * 2, height: gridHeight + BOARD_FRAME * 2 },
         joltStyle,
       ]}
-      accessibilityLabel="Game board"
+      accessibilityLabel={t.game.board}
     >
       {/* Soft outer glow ring, then the frame itself. */}
       <Chamfer

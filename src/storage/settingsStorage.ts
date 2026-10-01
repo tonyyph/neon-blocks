@@ -1,3 +1,4 @@
+import { type Language, deviceLanguage, isLanguage } from '../i18n/language';
 import { DEFAULT_THEME_ID, type ThemeId, isThemeId } from '../theme/themes';
 import { isRecord, readJson, writeJson } from './jsonStorage';
 import { STORAGE_KEYS } from './storageKeys';
@@ -10,6 +11,7 @@ export type PersistedSettings = {
   ghostEnabled: boolean;
   controlMode: ControlMode;
   themeId: ThemeId;
+  language: Language;
 };
 
 export const DEFAULT_SETTINGS: PersistedSettings = {
@@ -18,13 +20,15 @@ export const DEFAULT_SETTINGS: PersistedSettings = {
   ghostEnabled: true,
   controlMode: 'gestures',
   themeId: DEFAULT_THEME_ID,
+  language: 'en',
 };
 
 /** Accepts any stored value and keeps only well-typed fields, falling back to defaults. */
 export const parseSettings = (value: unknown): PersistedSettings => {
-  if (!isRecord(value)) return DEFAULT_SETTINGS;
-  const bool = (key: keyof PersistedSettings) =>
-    typeof value[key] === 'boolean' ? (value[key] as boolean) : (DEFAULT_SETTINGS[key] as boolean);
+  // First launch (or unreadable data): follow the device language.
+  if (!isRecord(value)) return { ...DEFAULT_SETTINGS, language: deviceLanguage() };
+  const bool = (key: 'soundEnabled' | 'hapticsEnabled' | 'ghostEnabled') =>
+    typeof value[key] === 'boolean' ? (value[key] as boolean) : DEFAULT_SETTINGS[key];
   return {
     soundEnabled: bool('soundEnabled'),
     hapticsEnabled: bool('hapticsEnabled'),
@@ -32,6 +36,7 @@ export const parseSettings = (value: unknown): PersistedSettings => {
     // Gestures are the only control scheme; the field is kept for a possible buttons option.
     controlMode: 'gestures',
     themeId: isThemeId(value.themeId) ? value.themeId : DEFAULT_THEME_ID,
+    language: isLanguage(value.language) ? value.language : deviceLanguage(),
   };
 };
 

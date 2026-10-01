@@ -23,12 +23,27 @@ importers:
       '@expo-google-fonts/cormorant-garamond':
         specifier: ^0.4.1
         version: 0.4.1
+      '@expo-google-fonts/grenze-gotisch':
+        specifier: ^0.4.2
+        version: 0.4.2
+      '@expo-google-fonts/jetbrains-mono':
+        specifier: ^0.4.1
+        version: 0.4.1
       '@expo-google-fonts/orbitron':
         specifier: ^0.4.2
         version: 0.4.2
+      '@expo-google-fonts/patrick-hand':
+        specifier: ^0.4.1
+        version: 0.4.1
+      '@expo-google-fonts/playfair-display-sc':
+        specifier: ^0.4.1
+        version: 0.4.1
       '@expo-google-fonts/share-tech-mono':
         specifier: ^0.4.1
         version: 0.4.1
+      '@expo-google-fonts/tektur':
+        specifier: ^0.4.2
+        version: 0.4.2
       '@expo-google-fonts/unifrakturmaguntia':
         specifier: ^0.4.1
         version: 0.4.1
@@ -59,6 +74,9 @@ importers:
       expo-linear-gradient:
         specifier: ~57.0.2
         version: 57.0.2(expo@57.0.26)(react-native@0.86.3(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+      expo-localization:
+        specifier: ~57.0.2
+        version: 57.0.2(expo@57.0.26)(react@19.2.3)
       expo-sharing:
         specifier: ~57.0.22
         version: 57.0.22(expo@57.0.26)(react-native@0.86.3(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
@@ -659,11 +677,26 @@ packages:
   '@expo-google-fonts/cormorant-garamond@0.4.1':
     resolution: {integrity: sha512-e8J4Cn13K1txygamg50n3odLUsYP7Ck28XOGobMi7uDsWvFmp/jgK0qcALqJTlmi9NczSWUNdERxcLauHCBa/Q==}
 
+  '@expo-google-fonts/grenze-gotisch@0.4.2':
+    resolution: {integrity: sha512-X9XzVqJWhvsazok9Lo5h1O8szq43P+G1xqCpu9+3VFVox0JXTPI9BDhREXg/MH/de5pFqSI6MSiblgIRWZQ5BA==}
+
+  '@expo-google-fonts/jetbrains-mono@0.4.1':
+    resolution: {integrity: sha512-CslACrtMOcRwoWXCO7OMEI+9w3fukWSoBtvNz46OqPoogEuuoY0tkDY1O8sFumk8t0pC6Cx0Xr95O0TOQhpkug==}
+
   '@expo-google-fonts/orbitron@0.4.2':
     resolution: {integrity: sha512-lp92oZ6FF1tA9dzJxKYPHae8hVxfVJzh5jRvjPCN8P1kkF615n/mq0U4ZQ7EXiEJvO7Cpwg+lZlkSbRw7CiDug==}
 
+  '@expo-google-fonts/patrick-hand@0.4.1':
+    resolution: {integrity: sha512-Z/gioyynhzrsF6Od8E2QKpQooHnEzUmfen9ohVT6uaeWAmQy3pkl9r7AGdJx9ersDSLUciCNFV442leHIieJqQ==}
+
+  '@expo-google-fonts/playfair-display-sc@0.4.1':
+    resolution: {integrity: sha512-09k6v+fDw8fz1FSksGDzlBbK39z5IiEBGECv47ZtKfRBbZjMsQA4t4PbUgLVn9xcj7WGJoBvpi4m3YxXcGkKVg==}
+
   '@expo-google-fonts/share-tech-mono@0.4.1':
     resolution: {integrity: sha512-SwOwfm3Kgl2UX0IyOkYtvEgdRQTfbLZ3OJ3GMwZAcMsuCxocELUpAd+eo5LCXUhPqa1zJRgnXARZZMTmd2Vuew==}
+
+  '@expo-google-fonts/tektur@0.4.2':
+    resolution: {integrity: sha512-KNDfB+3mGQDY8/XmAI+e10EwZGmN/V0V8D4Rqd+11B1I0ugZqhLQ/QpUUHIxAqteQLHE3pW+bC7oAPXbHDBGDA==}
 
   '@expo-google-fonts/unifrakturmaguntia@0.4.1':
     resolution: {integrity: sha512-S+vdy52M6qqX80clUqbMlIzyh6av3ZzcUbobuLHnLpdNEAn/cWJ+vxZuEE+Ha5R88QhtsMllpgEsiZaTqNkd3A==}
@@ -2227,6 +2260,12 @@ packages:
       react: '*'
       react-native: '*'
 
+  expo-localization@57.0.2:
+    resolution: {integrity: sha512-sIKYH3Ivddoge568WY6j+Kp2MAAZzWWqEnY2bokLkJFwX366tGL1mEnoY2WUi/qHatFFPop2yqDdurzbhnnimQ==}
+    peerDependencies:
+      expo: '*'
+      react: '*'
+
   expo-modules-autolinking@57.0.13:
     resolution: {integrity: sha512-Hj5NjZRlfccazhKab+wK19leRVUr1Y/PUERaRvegIbUSkq4GVxKq6lU9QHlKQyC16MdD/VS4iwsiLivB4o7lvQ==}
     hasBin: true
@@ -3766,6 +3805,9 @@ packages:
     resolution: {integrity: sha512-6IzJLuGi4+R14vwagDHX+JrXmPVtPpn4mffDJ1UdR7/Edm87fl6yi8mMBIVvFtJaNTUvjughmW4hwLhRG7gC1Q==}
     engines: {node: '>=4'}
 
+  rtl-detect@1.1.2:
+    resolution: {integrity: sha512-PGMBq03+TTG/p/cRB7HCLKJ1MgDIi07+QU1faSjiYRfmY5UsAttV9Hs08jDAHVwcOwmVLcSJkpwyfXszVjWfIQ==}
+
   safe-array-concat@1.1.4:
     resolution: {integrity: sha512-wtZlHyOje6OZTGqAoaDKxFkgRtkF9CnHAVnCHKfuj200wAgL+bSJhdsCD2l0Qx/2ekEXjPWcyKkfGb5CPboslg==}
     engines: {node: '>=0.4'}
@@ -5033,9 +5075,19 @@ snapshots:
 
   '@expo-google-fonts/cormorant-garamond@0.4.1': {}
 
+  '@expo-google-fonts/grenze-gotisch@0.4.2': {}
+
+  '@expo-google-fonts/jetbrains-mono@0.4.1': {}
+
   '@expo-google-fonts/orbitron@0.4.2': {}
 
+  '@expo-google-fonts/patrick-hand@0.4.1': {}
+
+  '@expo-google-fonts/playfair-display-sc@0.4.1': {}
+
   '@expo-google-fonts/share-tech-mono@0.4.1': {}
+
+  '@expo-google-fonts/tektur@0.4.2': {}
 
   '@expo-google-fonts/unifrakturmaguntia@0.4.1': {}
 
@@ -5768,7 +5820,9 @@ snapshots:
       metro-runtime: 0.84.6
     transitivePeerDependencies:
       - '@babel/core'
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   '@react-native/normalize-colors@0.86.3': {}
 
@@ -7170,6 +7224,12 @@ snapshots:
       expo: 57.0.26(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(react-native-worklets@0.10.1(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(react-native@0.86.3(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(react-native@0.86.3(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
       react: 19.2.3
       react-native: 0.86.3(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.3)
+
+  expo-localization@57.0.2(expo@57.0.26)(react@19.2.3):
+    dependencies:
+      expo: 57.0.26(@babel/core@7.29.7)(@expo/dom-webview@57.0.1)(react-native-worklets@0.10.1(@babel/core@7.29.7)(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(react-native@0.86.3(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(react-native@0.86.3(@babel/core@7.29.7)(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@react-native/metro-config@0.86.3(@babel/core@7.29.7))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
+      react: 19.2.3
+      rtl-detect: 1.1.2
 
   expo-modules-autolinking@57.0.13(typescript@6.0.3):
     dependencies:
@@ -9206,6 +9266,8 @@ snapshots:
     dependencies:
       onetime: 2.0.1
       signal-exit: 3.0.7
+
+  rtl-detect@1.1.2: {}
 
   safe-array-concat@1.1.4:
     dependencies:

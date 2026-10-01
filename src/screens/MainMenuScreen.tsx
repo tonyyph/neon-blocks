@@ -9,6 +9,7 @@ import { PressableScale } from '../components/ui/PressableScale';
 import { Readout } from '../components/ui/Readout';
 import { Screen } from '../components/ui/Screen';
 import { Text } from '../components/ui/Text';
+import { useT } from '../i18n';
 import { useStatsStore } from '../store/statsStore';
 import { withAlpha } from '../theme/colorUtils';
 import { spacing } from '../theme/spacing';
@@ -32,7 +33,9 @@ export const MainMenuScreen = ({
   onHowToPlay,
 }: Props) => {
   const theme = useTheme();
+  const t = useT();
   const { colors } = theme;
+  const themeName = t.themes.names[theme.id];
   const marathon = useStatsStore((store) => store.progress.records.marathon);
   const games = useStatsStore((store) => store.progress.totals.games);
 
@@ -40,7 +43,7 @@ export const MainMenuScreen = ({
     <Screen style={styles.screen}>
       <PressableScale
         accessibilityRole="button"
-        accessibilityLabel={`Theme: ${theme.name}. Change theme`}
+        accessibilityLabel={t.menu.themeChip(themeName)}
         onPress={onThemes}
         style={styles.themeChip}
       >
@@ -52,7 +55,7 @@ export const MainMenuScreen = ({
         >
           <Icon name="palette-swatch-variant" size={16} color={colors.primary} />
           <Text variant="caption" color={colors.text}>
-            {theme.name}
+            {themeName}
           </Text>
         </Chamfer>
       </PressableScale>
@@ -71,37 +74,37 @@ export const MainMenuScreen = ({
 
       <View style={styles.record}>
         <Text variant="label" color={colors.textDim}>
-          Marathon best
+          {t.menu.marathonBest}
         </Text>
         <Readout value={marathon?.bestScore ?? 0} digits={7} variant="score" color={colors.text} />
         {games > 0 ? (
           <Text variant="caption" color={colors.textDim}>
-            {`${games.toLocaleString()} ${games === 1 ? 'game' : 'games'} played`}
+            {t.menu.gamesPlayed(games)}
           </Text>
         ) : null}
       </View>
 
       <View style={styles.actions}>
-        <Button label="Play" icon="play" variant="primary" onPress={onPlay} />
+        <Button label={t.menu.play} icon="play" variant="primary" onPress={onPlay} />
         <View style={styles.row}>
           <View style={styles.half}>
-            <Button label="Records" icon="chart-box-outline" onPress={onRecords} />
+            <Button label={t.menu.records} icon="chart-box-outline" onPress={onRecords} />
           </View>
           <View style={styles.half}>
-            <Button label="Awards" icon="trophy-outline" onPress={onAwards} />
+            <Button label={t.menu.awards} icon="trophy-outline" onPress={onAwards} />
           </View>
         </View>
         <View style={styles.row}>
           <View style={styles.half}>
-            <Button label="Themes" icon="palette-outline" onPress={onThemes} />
+            <Button label={t.menu.themes} icon="palette-outline" onPress={onThemes} />
           </View>
           <View style={styles.half}>
-            <Button label="Settings" icon="cog-outline" onPress={onSettings} />
+            <Button label={t.menu.settings} icon="cog-outline" onPress={onSettings} />
           </View>
         </View>
         <PressableScale accessibilityRole="button" onPress={onHowToPlay} style={styles.link}>
           <Text variant="caption" color={colors.textDim}>
-            How to play
+            {t.menu.howToPlay}
           </Text>
         </PressableScale>
       </View>

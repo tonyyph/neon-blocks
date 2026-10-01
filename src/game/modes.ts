@@ -4,9 +4,6 @@ export type RecordKind = 'score' | 'time';
 
 export interface ModeConfig {
   id: GameMode;
-  name: string;
-  /** One line for the mode picker: what you do and how it ends. */
-  summary: string;
   /** The game ends with outcome 'timeUp' when the clock reaches this. */
   timeLimitMs: number | null;
   /** The game ends with outcome 'completed' once this many lines are cleared. */
@@ -18,6 +15,8 @@ export interface ModeConfig {
   zone: boolean;
   /** A new random mutator at every level. */
   mutators: boolean;
+  /** Pieces fall on their own. Off only in the tutorial, so nobody is rushed while learning. */
+  gravity: boolean;
   /** What counts as a record: highest score, or fastest completion. */
   record: RecordKind;
 }
@@ -25,86 +24,90 @@ export interface ModeConfig {
 export const MODES: Record<GameMode, ModeConfig> = {
   marathon: {
     id: 'marathon',
-    name: 'Marathon',
-    summary: 'Endless. Faster every 10 lines.',
     timeLimitMs: null,
     lineGoal: null,
     garbageRows: 0,
     cascade: false,
     zone: true,
     mutators: false,
+    gravity: true,
     record: 'score',
   },
   sprint: {
     id: 'sprint',
-    name: 'Sprint',
-    summary: 'Clear 40 lines as fast as you can.',
     timeLimitMs: null,
     lineGoal: 40,
     garbageRows: 0,
     cascade: false,
     zone: false,
     mutators: false,
+    gravity: true,
     record: 'time',
   },
   ultra: {
     id: 'ultra',
-    name: 'Ultra',
-    summary: 'Two minutes. Score as much as you can.',
     timeLimitMs: 120_000,
     lineGoal: null,
     garbageRows: 0,
     cascade: false,
     zone: true,
     mutators: false,
+    gravity: true,
     record: 'score',
   },
   dig: {
     id: 'dig',
-    name: 'Dig',
-    summary: 'Ten rows of garbage. Dig to the floor.',
     timeLimitMs: null,
     lineGoal: null,
     garbageRows: 10,
     cascade: false,
     zone: false,
     mutators: false,
+    gravity: true,
     record: 'time',
   },
   cascade: {
     id: 'cascade',
-    name: 'Cascade',
-    summary: 'Loose blocks fall after a clear. Chain the reactions.',
     timeLimitMs: null,
     lineGoal: null,
     garbageRows: 0,
     cascade: true,
     zone: false,
     mutators: false,
+    gravity: true,
     record: 'score',
   },
   mutators: {
     id: 'mutators',
-    name: 'Mutators',
-    summary: 'Every level twists a rule: fog, mirror, ghosts, turbo.',
     timeLimitMs: null,
     lineGoal: null,
     garbageRows: 0,
     cascade: false,
     zone: true,
     mutators: true,
+    gravity: true,
     record: 'score',
   },
   daily: {
     id: 'daily',
-    name: 'Daily',
-    summary: 'Three minutes, today’s pieces and today’s twist.',
     timeLimitMs: 180_000,
     lineGoal: null,
     garbageRows: 0,
     cascade: false,
     zone: true,
     mutators: false,
+    gravity: true,
+    record: 'score',
+  },
+  tutorial: {
+    id: 'tutorial',
+    timeLimitMs: null,
+    lineGoal: null,
+    garbageRows: 0,
+    cascade: false,
+    zone: true,
+    mutators: false,
+    gravity: false,
     record: 'score',
   },
 };
@@ -120,13 +123,6 @@ export const MODE_ORDER: readonly GameMode[] = [
 ];
 
 export const MUTATORS: readonly Mutator[] = ['fog', 'mirror', 'invisible', 'turbo'];
-
-export const MUTATOR_INFO: Record<Mutator, { name: string; hint: string }> = {
-  fog: { name: 'Fog', hint: 'The bottom of the well is hidden.' },
-  mirror: { name: 'Mirror', hint: 'Left and right are swapped.' },
-  invisible: { name: 'Ghosts', hint: 'Locked blocks fade to outlines.' },
-  turbo: { name: 'Turbo', hint: 'Gravity doubles.' },
-};
 
 /** Local calendar date as YYYY-MM-DD; the key for Daily seeds and history. */
 export const toDateKey = (date: Date): string => {

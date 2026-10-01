@@ -28,9 +28,27 @@ export interface ActivePiece {
   y: number;
 }
 
+/**
+ * A prepared starting position, for the tutorial: a board to start on, the first pieces to deal
+ * (random 7-bags follow), and an optional pre-charged Zone meter.
+ */
+export interface Scenario {
+  board?: Board;
+  pieces?: readonly PieceType[];
+  zoneMeter?: number;
+}
+
 export type GameStatus = 'idle' | 'playing' | 'paused' | 'gameOver';
 
-export type GameMode = 'marathon' | 'sprint' | 'ultra' | 'dig' | 'cascade' | 'mutators' | 'daily';
+export type GameMode =
+  | 'marathon'
+  | 'sprint'
+  | 'ultra'
+  | 'dig'
+  | 'cascade'
+  | 'mutators'
+  | 'daily'
+  | 'tutorial';
 
 /** How a game ended: stacked out, reached its goal, or ran out of time. */
 export type GameOutcome = 'topOut' | 'completed' | 'timeUp';
@@ -48,7 +66,8 @@ export interface ZoneState {
 }
 
 export type GameEvent =
-  | { type: 'move' }
+  | { type: 'move'; dx: -1 | 1 }
+  | { type: 'softDrop' }
   | { type: 'rotate' }
   | { type: 'hold' }
   | { type: 'hardDrop'; cells: number }
@@ -125,7 +144,7 @@ export interface GameState {
 }
 
 export type GameAction =
-  | { type: 'start'; seed: number; mode?: GameMode; dateKey?: string }
+  | { type: 'start'; seed: number; mode?: GameMode; dateKey?: string; scenario?: Scenario }
   | { type: 'tick'; deltaMs: number }
   | { type: 'move'; dx: -1 | 1 }
   | { type: 'rotate'; direction: 1 | -1 }

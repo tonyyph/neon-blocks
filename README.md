@@ -104,6 +104,25 @@ pieces against the well; `fonts.test.ts` re-measures each bundled font file and 
 style's line height is tighter than the font's own line box (tall fonts such as Baloo 2 need
 1.6× their size or they clip).
 
+## Languages
+
+English and Vietnamese, switched in Settings → Language; the first launch follows the device.
+Strings live in `src/i18n/en.ts` (the source, and the type) and `src/i18n/vi.ts`. Strings that
+depend on a value are functions, so each language orders words its own way. Read them with
+`useT()` in components or `getT()` elsewhere; numbers and dates go through `formatNumber` /
+`formatDay` (12.345 and 01/10/2026 in Vietnamese).
+
+The Vietnamese is written the way players talk, not word for word: Tetris, Combo, Zone and
+Marathon stay as they are; everything else is natural Vietnamese. `i18n.test.ts` fails if a
+Vietnamese string is identical to its English source unless it is on the keep-as-is list.
+
+Five theme fonts have no Vietnamese glyphs (Orbitron, Share Tech Mono, Architects Daughter,
+Cinzel, UnifrakturMaguntia). Each has a companion that does (Tektur, JetBrains Mono, Patrick
+Hand, Playfair Display SC, Grenze Gotisch). The swap is per string: text with Vietnamese letters
+uses the companion, plain ASCII such as the logo and score digits keeps the theme's own font.
+`fonts.test.ts` reads every font file's character map and fails if a font can draw neither
+Vietnamese itself nor through its companion.
+
 ## Architecture
 
 ```
@@ -144,7 +163,7 @@ Decisions worth knowing before changing things:
 
 ## Tests
 
-`pnpm test` runs 160 tests over the modes, Zone, Cascade, progress and achievements, the theme palettes and font metrics, the gesture maths (axis lock, step counting, flick detection), the board, collision, movement, SRS rotation and kicks, line
+`pnpm test` runs 191 tests over the translations and Vietnamese font coverage, the modes, Zone, Cascade, progress and achievements, the theme palettes and font metrics, the gesture maths (axis lock, step counting, flick detection), the board, collision, movement, SRS rotation and kicks, line
 clears, scoring, levels, 7-bag, lock delay, hold rules, game over and storage parsing. The UI
 has no automated tests; see the manual checklist in [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md).
 
