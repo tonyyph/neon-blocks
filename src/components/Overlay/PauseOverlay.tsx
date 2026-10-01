@@ -11,7 +11,8 @@ interface Props {
   onResume: () => void;
   onRestart: () => void;
   onSettings: () => void;
-  onMenu: () => void;
+  /** Omitted when leaving is not allowed (the mandatory tutorial), which hides the button. */
+  onMenu?: () => void;
 }
 
 export const PauseOverlay = ({ onResume, onRestart, onSettings, onMenu }: Props) => {
@@ -25,7 +26,7 @@ export const PauseOverlay = ({ onResume, onRestart, onSettings, onMenu }: Props)
       <Button label={t.pause.resume} icon="play" variant="primary" onPress={onResume} />
       <Button label={t.pause.restart} icon="restart" onPress={onRestart} />
       <Button label={t.pause.settings} icon="cog-outline" onPress={onSettings} />
-      <Button label={t.pause.menu} icon="home-outline" onPress={onMenu} />
+      {onMenu ? <Button label={t.pause.menu} icon="home-outline" onPress={onMenu} /> : null}
     </OverlayCard>
   );
 };

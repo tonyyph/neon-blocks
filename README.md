@@ -76,8 +76,13 @@ drop, hard drop, hold, clear lines (a Tetris into a prepared well) and Zone. Eac
 prepared position (`Scenario`: board, scripted pieces, Zone charge) in the gravity-free
 `tutorial` mode, watches game events and moves on once the player has actually done the move
 (`src/tutorial/steps.ts`). A coach card under the board animates the gesture; Skip is always one
-tap away. Players who already had saved settings before the tutorial existed are not shown it;
-anyone can replay it from How to play. Tutorial games never count toward records or awards.
+tap away on replays.
+
+On a fresh install the tutorial is mandatory: it opens before anything else, with no Skip and no
+Main menu in the pause menu, and it comes back on every launch until it is finished. Progress
+sits in `src/store/tutorialStore.ts`, so a trip to Settings from the pause menu returns to the
+same step. Players who already had saved settings before the tutorial existed are not shown it;
+anyone can replay it from How to play, where it is optional. Tutorial games never count toward records or awards.
 
 ## Progress
 

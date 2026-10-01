@@ -20,7 +20,8 @@ import { OverlayCard } from './OverlayCard';
 
 interface Props {
   onRestart: () => void;
-  onMenu: () => void;
+  /** Omitted when leaving is not allowed, which hides the Menu button. */
+  onMenu?: () => void;
 }
 
 const Stat = ({ label, value }: { label: string; value: string }) => {
@@ -150,9 +151,11 @@ export const GameOverOverlay = ({ onRestart, onMenu }: Props) => {
             onPress={share}
           />
         </View>
-        <View style={styles.half}>
-          <Button label={t.gameOver.menu} icon="home-outline" onPress={onMenu} />
-        </View>
+        {onMenu ? (
+          <View style={styles.half}>
+            <Button label={t.gameOver.menu} icon="home-outline" onPress={onMenu} />
+          </View>
+        ) : null}
       </View>
     </OverlayCard>
   );

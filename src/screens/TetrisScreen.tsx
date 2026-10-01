@@ -162,7 +162,8 @@ const LevelLines = () => {
 
 interface Props {
   onOpenSettings: () => void;
-  onExitToMenu: () => void;
+  /** Omitted when the player may not leave (the mandatory tutorial). */
+  onExitToMenu?: () => void;
   /** Replaces the gesture legend under the board, outside the touch area (the tutorial coach). */
   footer?: ReactNode;
   /** What Restart in the pause menu does; defaults to a new game in the same mode. */
@@ -196,10 +197,12 @@ export const TetrisScreen = ({
     setAreaWidth(width);
   };
 
-  const exitToMenu = () => {
-    dispatchGame({ type: 'quit' });
-    onExitToMenu();
-  };
+  const exitToMenu = onExitToMenu
+    ? () => {
+        dispatchGame({ type: 'quit' });
+        onExitToMenu();
+      }
+    : undefined;
 
   return (
     <Screen backdrop="dim">

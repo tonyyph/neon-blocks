@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { OverlayCard } from '../components/Overlay/OverlayCard';
@@ -10,6 +10,7 @@ import { haptics } from '../hooks/useHaptics';
 import { useT } from '../i18n';
 import { dispatchGame, useGameStore } from '../store/gameStore';
 import { useSettingsStore } from '../store/settingsStore';
+import { useTutorialStore } from '../store/tutorialStore';
 import { spacing } from '../theme/spacing';
 import { useTheme } from '../theme/useTheme';
 import { EMPTY_PROGRESS, type StepProgress, TUTORIAL_STEPS, applyEvent } from '../tutorial/steps';
@@ -18,7 +19,6 @@ import { TetrisScreen } from './TetrisScreen';
 /** How long "Nice!" stays up before the next step's board loads. */
 const SUCCESS_PAUSE_MS = 1100;
 
-type Phase = 'intro' | 'step' | 'success' | 'done';
 export type TutorialExit = 'marathon' | 'modes' | 'menu';
 
 interface Props {
@@ -29,19 +29,25 @@ interface Props {
 /**
  * Step-by-step tutorial on a real board. Each step loads a prepared position, watches the game's
  * events, and moves on once the player has actually done the move it teaches. Gravity is off.
+ *
+ * On first install it is mandatory: no Skip, and no way to the main menu until it is finished.
+ * Quitting the app midway brings it back on the next launch.
  */
 export const TutorialScreen = ({ onExit, onOpenSettings }: Props) => {
   const { colors } = useTheme();
   const t = useT();
   const update = useSettingsStore((store) => store.update);
-  const [phase, setPhase] = useState<Phase>('intro');
-  const [index, setIndex] = useState(0);
+  const phase = useTutorialStore((store) => store.phase);
+  const index = useTutorialStore((store) => store.index);
+  const mandatory = useTutorialStore((store) => store.mandatory);
+  const goTo = useTutorialStore((store) => store.goTo);
   const progress = useRef<StepProgress>(EMPTY_PROGRESS);
   const step = TUTORIAL_STEPS[index];
 
-  // Start from a clean slate, whatever game was left behind (paused, finished…).
+  // On a fresh start, clear whatever game was left behind (paused, finished…). Coming back from
+  // Settings mid-step keeps the paused tutorial board as it was.
   useEffect(() => {
-    dispatchGame({ type: 'quit' });
+    if (useTutorialStore.getState().phase === 'intro') dispatchGame({ type: 'quit' });
   }, []);
 
   const loadStep = useCallback((stepIndex: number) => {
@@ -56,11 +62,10 @@ export const TutorialScreen = ({ onExit, onOpenSettings }: Props) => {
 
   const begin = () => {
     loadStep(0);
-    setIndex(0);
-    setPhase('step');
+    goTo('step', 0);
   };
 
-  /** Leaving, finishing or skipping all count as having seen the tutorial. */
+  /** Finishing (or, on an optional replay, skipping) marks the tutorial as seen. */
   const exit = useCallback(
     (to: TutorialExit) => {
       update({ tutorialDone: true });
@@ -82,10 +87,10 @@ export const TutorialScreen = ({ onExit, onOpenSettings }: Props) => {
       progress.current = game.events.reduce(applyEvent, progress.current);
       if (step.done(progress.current)) {
         haptics.success();
-        setPhase('success');
+        goTo('success');
       }
     });
-  }, [phase, index, step, loadStep]);
+  }, [phase, index, step, loadStep, goTo]);
 
   // After the "Nice!" beat, load the next step or finish.
   useEffect(() => {
@@ -93,14 +98,13 @@ export const TutorialScreen = ({ onExit, onOpenSettings }: Props) => {
     const timer = setTimeout(() => {
       if (index + 1 < TUTORIAL_STEPS.length) {
         loadStep(index + 1);
-        setIndex(index + 1);
-        setPhase('step');
+        goTo('step', index + 1);
       } else {
-        setPhase('done');
+        goTo('done');
       }
     }, SUCCESS_PAUSE_MS);
     return () => clearTimeout(timer);
-  }, [phase, index, loadStep]);
+  }, [phase, index, loadStep, goTo]);
 
   const [title, body] = t.tutorial.steps[step.id];
 
@@ -108,7 +112,7 @@ export const TutorialScreen = ({ onExit, onOpenSettings }: Props) => {
     <View style={styles.root}>
       <TetrisScreen
         onOpenSettings={onOpenSettings}
-        onExitToMenu={() => exit('menu')}
+        onExitToMenu={mandatory ? undefined : () => exit('menu')}
         onRestart={() => loadStep(index)}
         hideGameOver
         footer={
@@ -120,7 +124,7 @@ export const TutorialScreen = ({ onExit, onOpenSettings }: Props) => {
               body={body}
               demo={step.demo}
               succeeded={phase === 'success'}
-              onSkip={() => exit('menu')}
+              onSkip={mandatory ? undefined : () => exit('menu')}
             />
           ) : null
         }
@@ -142,7 +146,7 @@ export const TutorialScreen = ({ onExit, onOpenSettings }: Props) => {
             variant="primary"
             onPress={begin}
           />
-          <Button label={t.tutorial.skip} onPress={() => exit('menu')} />
+          {mandatory ? null : <Button label={t.tutorial.skip} onPress={() => exit('menu')} />}
         </OverlayCard>
       ) : null}
 

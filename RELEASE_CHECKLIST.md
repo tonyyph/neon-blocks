@@ -14,7 +14,10 @@
 
 Run on at least one small screen (iPhone SE / 5" Android) and one large (Pro Max class).
 
-- [ ] Fresh install opens the tutorial; Skip goes to the menu and it does not come back
+- [ ] Fresh install opens the tutorial with no way out but finishing it (no Skip, no Main menu
+      in pause); killing the app midway brings it back; after finishing it never returns
+- [ ] Settings from the tutorial's pause menu returns to the same step
+- [ ] Replaying from How to play shows Skip
 - [ ] Every tutorial step advances only after its gesture; the clear step is doable; the
       finish card's three buttons go where they say
 - [ ] Menu → Start begins a game; the first piece appears in the visible field

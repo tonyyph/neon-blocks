@@ -127,7 +127,8 @@ interface Props {
   demo: Demo;
   /** Shows the "Nice!" state while the next step loads. */
   succeeded: boolean;
-  onSkip: () => void;
+  /** Omitted while the tutorial is mandatory, which hides Skip. */
+  onSkip?: () => void;
 }
 
 /** The tutorial's instructions, under the board and outside the touch area. */
@@ -163,11 +164,13 @@ export const CoachCard = ({ step, total, title, body, demo, succeeded, onSkip }:
             <Text variant="label" color={colors.textDim}>
               {t.tutorial.stepCounter(step, total)}
             </Text>
-            <PressableScale accessibilityRole="button" hitSlop={10} onPress={onSkip}>
-              <Text variant="label" color={colors.textDim}>
-                {t.tutorial.skipShort}
-              </Text>
-            </PressableScale>
+            {onSkip ? (
+              <PressableScale accessibilityRole="button" hitSlop={10} onPress={onSkip}>
+                <Text variant="label" color={colors.textDim}>
+                  {t.tutorial.skipShort}
+                </Text>
+              </PressableScale>
+            ) : null}
           </View>
           <Text variant="heading" color={succeeded ? colors.success : colors.text}>
             {succeeded ? t.tutorial.success : title}

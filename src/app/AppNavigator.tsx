@@ -15,6 +15,7 @@ import { TutorialScreen } from '../screens/TutorialScreen';
 import { dispatchGame, startNewGame, useGameStore } from '../store/gameStore';
 import { useSettingsStore } from '../store/settingsStore';
 import { useStatsStore } from '../store/statsStore';
+import { useTutorialStore } from '../store/tutorialStore';
 import { FONT_ASSETS } from '../theme/fonts';
 
 SplashScreen.preventAutoHideAsync().catch(() => undefined);
@@ -50,8 +51,12 @@ export const AppNavigator = () => {
       useSettingsStore.getState().hydrate(),
       useStatsStore.getState().hydrate(),
     ]).finally(() => {
-      // A brand-new player starts with the tutorial (it can be skipped from its first card).
-      if (!useSettingsStore.getState().settings.tutorialDone) setRoute('tutorial');
+      // A fresh install must play the tutorial before anything else, and keeps getting it on
+      // every launch until it has been finished.
+      if (!useSettingsStore.getState().settings.tutorialDone) {
+        useTutorialStore.getState().open(true);
+        setRoute('tutorial');
+      }
       setStorageReady(true);
     });
   }, []);
@@ -118,7 +123,13 @@ export const AppNavigator = () => {
       return <ThemesScreen onBack={() => setRoute(themesReturn)} />;
     case 'howToPlay':
       return (
-        <HowToPlayScreen onBack={() => setRoute('menu')} onTutorial={() => setRoute('tutorial')} />
+        <HowToPlayScreen
+          onBack={() => setRoute('menu')}
+          onTutorial={() => {
+            useTutorialStore.getState().open(false);
+            setRoute('tutorial');
+          }}
+        />
       );
     case 'tutorial':
       return (
