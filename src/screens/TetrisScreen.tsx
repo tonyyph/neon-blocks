@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { type LayoutChangeEvent, StyleSheet, View } from 'react-native';
 import { GestureDetector } from 'react-native-gesture-handler';
 
@@ -163,9 +163,21 @@ const LevelLines = () => {
 interface Props {
   onOpenSettings: () => void;
   onExitToMenu: () => void;
+  /** Replaces the gesture legend under the board, outside the touch area (the tutorial coach). */
+  footer?: ReactNode;
+  /** What Restart in the pause menu does; defaults to a new game in the same mode. */
+  onRestart?: () => void;
+  /** The tutorial restarts its own step instead of showing a game-over card. */
+  hideGameOver?: boolean;
 }
 
-export const TetrisScreen = ({ onOpenSettings, onExitToMenu }: Props) => {
+export const TetrisScreen = ({
+  onOpenSettings,
+  onExitToMenu,
+  footer,
+  onRestart = () => startNewGame(),
+  hideGameOver = false,
+}: Props) => {
   const t = useT();
   useGameLoop();
   useSoundEffects();
@@ -207,19 +219,20 @@ export const TetrisScreen = ({ onOpenSettings, onExitToMenu }: Props) => {
               </View>
             ) : null}
           </View>
-          <GestureHints />
+          {footer ? null : <GestureHints />}
         </View>
       </GestureDetector>
+      {footer}
 
       {status === 'paused' ? (
         <PauseOverlay
           onResume={() => dispatchGame({ type: 'resume' })}
-          onRestart={() => startNewGame()}
+          onRestart={onRestart}
           onSettings={onOpenSettings}
           onMenu={exitToMenu}
         />
       ) : null}
-      {status === 'gameOver' ? (
+      {status === 'gameOver' && !hideGameOver ? (
         <GameOverOverlay onRestart={() => startNewGame()} onMenu={exitToMenu} />
       ) : null}
     </Screen>

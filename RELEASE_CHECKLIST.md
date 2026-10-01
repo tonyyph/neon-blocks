@@ -14,6 +14,9 @@
 
 Run on at least one small screen (iPhone SE / 5" Android) and one large (Pro Max class).
 
+- [ ] Fresh install opens the tutorial; Skip goes to the menu and it does not come back
+- [ ] Every tutorial step advances only after its gesture; the clear step is doable; the
+      finish card's three buttons go where they say
 - [ ] Menu → Start begins a game; the first piece appears in the visible field
 - [ ] Dragging left/right moves one column per cell of travel and stops at walls
 - [ ] Tapping the right half rotates clockwise, the left half counter-clockwise, including

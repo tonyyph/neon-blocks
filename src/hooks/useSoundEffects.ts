@@ -57,6 +57,9 @@ export const soundsForEvents = (events: readonly GameEvent[]): SoundName[] => {
       case 'lock':
         action = action ?? 'lock';
         break;
+      case 'softDrop':
+        action = action ?? 'move';
+        break;
       default:
         action = action ?? event.type;
     }

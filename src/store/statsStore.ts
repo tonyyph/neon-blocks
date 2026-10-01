@@ -20,7 +20,8 @@ export const useStatsStore = create<StatsStore>((set, get) => ({
   hydrate: async () => set({ progress: await loadProgress() }),
   recordGame: (gameId, result) => {
     const { progress, lastOutcome } = get();
-    if (lastOutcome?.gameId === gameId) return;
+    // Tutorial runs are practice with a scripted board; they never count toward progress.
+    if (lastOutcome?.gameId === gameId || result.mode === 'tutorial') return;
     const applied = applyGameResult(progress, result, gameId);
     set({ progress: applied.progress, lastOutcome: applied.summary });
     void saveProgress(applied.progress);

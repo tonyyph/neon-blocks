@@ -319,3 +319,45 @@ describe('game stats', () => {
     expect(run(state).score).toBe(state.score);
   });
 });
+
+describe('Tutorial and scenarios', () => {
+  it('deals the scripted pieces first, then random bags', () => {
+    const state = gameReducer(createInitialState(), {
+      type: 'start',
+      seed: 1,
+      mode: 'tutorial',
+      scenario: { pieces: ['I', 'O', 'S'] },
+    });
+    expect(state.active?.type).toBe('I');
+    expect(state.queue.slice(0, 2)).toEqual(['O', 'S']);
+    expect(state.queue.length).toBeGreaterThan(7);
+  });
+
+  it('starts on the given board with the given Zone charge', () => {
+    const board = boardFrom(wellRows(4));
+    const state = gameReducer(createInitialState(), {
+      type: 'start',
+      seed: 1,
+      mode: 'tutorial',
+      scenario: { board, pieces: ['I'], zoneMeter: 1 },
+    });
+    expect(state.board).toBe(board);
+    expect(state.zone.meter).toBe(1);
+    expect(gameReducer(state, { type: 'activateZone' }).zone.active).toBe(true);
+  });
+
+  it('has no gravity, so a beginner is never rushed', () => {
+    const state = start('tutorial');
+    expect(tickFor(state, 5000).active).toEqual(state.active);
+  });
+
+  it('reports soft drops and move directions as events', () => {
+    const state = start('tutorial');
+    expect(gameReducer(state, { type: 'softDrop' }).events).toContainEqual({ type: 'softDrop' });
+    expect(gameReducer(state, { type: 'move', dx: 1 }).events).toEqual([{ type: 'move', dx: 1 }]);
+    const mirrored = { ...state, mutator: 'mirror' as const };
+    expect(gameReducer(mirrored, { type: 'move', dx: 1 }).events).toEqual([
+      { type: 'move', dx: -1 },
+    ]);
+  });
+});

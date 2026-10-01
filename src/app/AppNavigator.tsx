@@ -11,6 +11,7 @@ import { RecordsScreen } from '../screens/RecordsScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { TetrisScreen } from '../screens/TetrisScreen';
 import { ThemesScreen } from '../screens/ThemesScreen';
+import { TutorialScreen } from '../screens/TutorialScreen';
 import { dispatchGame, startNewGame, useGameStore } from '../store/gameStore';
 import { useSettingsStore } from '../store/settingsStore';
 import { useStatsStore } from '../store/statsStore';
@@ -18,7 +19,16 @@ import { FONT_ASSETS } from '../theme/fonts';
 
 SplashScreen.preventAutoHideAsync().catch(() => undefined);
 
-type Route = 'menu' | 'modes' | 'game' | 'records' | 'awards' | 'settings' | 'themes' | 'howToPlay';
+type Route =
+  | 'menu'
+  | 'modes'
+  | 'game'
+  | 'records'
+  | 'awards'
+  | 'settings'
+  | 'themes'
+  | 'howToPlay'
+  | 'tutorial';
 
 /**
  * A handful of screens and no deep links, so a tiny state machine replaces a navigation library. The game
@@ -39,7 +49,11 @@ export const AppNavigator = () => {
     Promise.all([
       useSettingsStore.getState().hydrate(),
       useStatsStore.getState().hydrate(),
-    ]).finally(() => setStorageReady(true));
+    ]).finally(() => {
+      // A brand-new player starts with the tutorial (it can be skipped from its first card).
+      if (!useSettingsStore.getState().settings.tutorialDone) setRoute('tutorial');
+      setStorageReady(true);
+    });
   }, []);
 
   useEffect(() => {
@@ -73,6 +87,7 @@ export const AppNavigator = () => {
           setRoute('menu');
           return true;
         case 'game':
+        case 'tutorial':
           if (useGameStore.getState().game.status === 'playing') dispatchGame({ type: 'pause' });
           return true;
         default:
@@ -102,7 +117,23 @@ export const AppNavigator = () => {
     case 'themes':
       return <ThemesScreen onBack={() => setRoute(themesReturn)} />;
     case 'howToPlay':
-      return <HowToPlayScreen onBack={() => setRoute('menu')} />;
+      return (
+        <HowToPlayScreen onBack={() => setRoute('menu')} onTutorial={() => setRoute('tutorial')} />
+      );
+    case 'tutorial':
+      return (
+        <TutorialScreen
+          onOpenSettings={() => openSettings('tutorial')}
+          onExit={(to) => {
+            if (to === 'marathon') {
+              startNewGame('marathon');
+              setRoute('game');
+            } else {
+              setRoute(to);
+            }
+          }}
+        />
+      );
     case 'modes':
       return (
         <ModeSelectScreen

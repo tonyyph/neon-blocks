@@ -1,5 +1,6 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
 
+import { Button } from '../components/ui/Button';
 import { Chamfer } from '../components/ui/Chamfer';
 import { Icon, type IconName } from '../components/ui/Icon';
 import { Screen } from '../components/ui/Screen';
@@ -24,9 +25,10 @@ const ICONS: IconName[] = [
 
 interface Props {
   onBack: () => void;
+  onTutorial: () => void;
 }
 
-export const HowToPlayScreen = ({ onBack }: Props) => {
+export const HowToPlayScreen = ({ onBack, onTutorial }: Props) => {
   const { colors } = useTheme();
   const t = useT();
   const card = { fill: withAlpha(colors.surface, 0.92), stroke: colors.line };
@@ -34,6 +36,12 @@ export const HowToPlayScreen = ({ onBack }: Props) => {
     <Screen>
       <ScreenHeader title={t.howToPlay.title} onBack={onBack} />
       <ScrollView contentContainerStyle={styles.content}>
+        <Button
+          label={t.tutorial.replay}
+          icon="school-outline"
+          variant="primary"
+          onPress={onTutorial}
+        />
         {t.howToPlay.items.map(([title, body], index) => (
           <Chamfer key={title} cut={10} {...card} style={styles.item}>
             <Chamfer cut={6} fill={colors.surfaceRaised} style={styles.iconWrap}>

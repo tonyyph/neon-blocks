@@ -41,14 +41,7 @@ export interface Scenario {
 export type GameStatus = 'idle' | 'playing' | 'paused' | 'gameOver';
 
 export type GameMode =
-  | 'marathon'
-  | 'sprint'
-  | 'ultra'
-  | 'dig'
-  | 'cascade'
-  | 'mutators'
-  | 'daily'
-  | 'tutorial';
+  'marathon' | 'sprint' | 'ultra' | 'dig' | 'cascade' | 'mutators' | 'daily' | 'tutorial';
 
 /** How a game ended: stacked out, reached its goal, or ran out of time. */
 export type GameOutcome = 'topOut' | 'completed' | 'timeUp';

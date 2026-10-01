@@ -61,7 +61,7 @@ describe('movement', () => {
     const state = start();
     const moved = gameReducer(state, { type: 'move', dx: -1 });
     expect(moved.active!.x).toBe(state.active!.x - 1);
-    expect(moved.events).toEqual([{ type: 'move' }]);
+    expect(moved.events).toEqual([{ type: 'move', dx: -1 }]);
   });
 
   it('stops at the wall', () => {

@@ -46,6 +46,7 @@ export const vi: Strings = {
       cascade: 'Dây chuyền',
       mutators: 'Đột biến',
       daily: 'Thử thách ngày',
+      tutorial: 'Hướng dẫn',
     },
     summaries: {
       marathon: 'Chơi không giới hạn, cứ 10 hàng lại nhanh hơn.',
@@ -55,6 +56,7 @@ export const vi: Strings = {
       cascade: 'Xóa hàng xong, khối lơ lửng rơi xuống và có thể nổ tiếp thành chuỗi.',
       mutators: 'Mỗi cấp đổi một luật chơi: sương mù, đảo chiều, bóng ma, tăng tốc.',
       daily: 'Ba phút với bộ khối và luật riêng của hôm nay.',
+      tutorial: 'Làm quen từng thao tác một.',
     },
   },
 
@@ -228,6 +230,36 @@ export const vi: Strings = {
     version: (version) => `Neon Blocks ${version}`,
     privacy:
       'Chơi hoàn toàn offline. Không cần tài khoản, không quảng cáo, không theo dõi. Dữ liệu chỉ nằm trên máy của bạn.',
+  },
+
+  tutorial: {
+    introTitle: 'Chào mừng đến Neon Blocks',
+    introBody:
+      'Chỉ mất chừng một phút với 7 thao tác. Làm thử ngay trên bảng, xong bước này là tự sang bước tiếp.',
+    start: 'Bắt đầu hướng dẫn',
+    skip: 'Bỏ qua, mình biết chơi rồi',
+    skipShort: 'Bỏ qua',
+    stepCounter: (n, total) => `Bước ${n}/${total}`,
+    steps: {
+      move: ['Di chuyển', 'Kéo sang trái, rồi kéo sang phải. Khối sẽ chạy theo ngón tay bạn.'],
+      rotate: [
+        'Xoay khối',
+        'Chạm nửa bên phải để xoay xuôi, nửa bên trái để xoay ngược. Thử xoay hai lần nhé.',
+      ],
+      softDrop: ['Thả chậm', 'Kéo từ từ xuống dưới để hạ khối từng hàng một.'],
+      hardDrop: ['Thả nhanh', 'Vuốt mạnh xuống. Khối rơi thẳng và khóa lại ngay.'],
+      hold: ['Giữ khối', 'Vuốt lên để cất khối này sang một bên, lát nữa đổi ra dùng lại.'],
+      clear: ['Xóa hàng', 'Chạm để dựng đứng khối I, kéo vào khe bên phải rồi vuốt mạnh xuống.'],
+      zone: ['Zone', 'Thanh Zone đã đầy. Bấm nút Zone ở góc trên bên phải để đóng băng thời gian.'],
+    },
+    success: 'Chuẩn rồi!',
+    finishTitle: 'Bạn sẵn sàng rồi!',
+    finishBody:
+      'Vậy là đủ để bắt đầu. Lấp đầy hàng để xóa, và để dành Zone cho lúc khối chồng cao.',
+    playMarathon: 'Chơi Marathon',
+    chooseMode: 'Chọn chế độ',
+    menu: 'Về menu chính',
+    replay: 'Hướng dẫn từng bước',
   },
 
   howToPlay: {

@@ -69,6 +69,16 @@ Mode rules live in `src/game/modes.ts`; the reducer reads them, so a new mode is
 config entry. Cascade settling is `src/game/cascade.ts`, Zone banking `src/game/zone.ts`, garbage
 `src/game/garbage.ts`.
 
+## Tutorial
+
+New players start with a seven-step interactive tutorial on a real board: move, rotate, soft
+drop, hard drop, hold, clear lines (a Tetris into a prepared well) and Zone. Each step loads a
+prepared position (`Scenario`: board, scripted pieces, Zone charge) in the gravity-free
+`tutorial` mode, watches game events and moves on once the player has actually done the move
+(`src/tutorial/steps.ts`). A coach card under the board animates the gesture; Skip is always one
+tap away. Players who already had saved settings before the tutorial existed are not shown it;
+anyone can replay it from How to play. Tutorial games never count toward records or awards.
+
 ## Progress
 
 Records per mode, all-time totals, the last ten games, the Daily history and streak, and 22
@@ -163,7 +173,7 @@ Decisions worth knowing before changing things:
 
 ## Tests
 
-`pnpm test` runs 191 tests over the translations and Vietnamese font coverage, the modes, Zone, Cascade, progress and achievements, the theme palettes and font metrics, the gesture maths (axis lock, step counting, flick detection), the board, collision, movement, SRS rotation and kicks, line
+`pnpm test` runs 201 tests over the tutorial steps (each one played through), the translations and Vietnamese font coverage, the modes, Zone, Cascade, progress and achievements, the theme palettes and font metrics, the gesture maths (axis lock, step counting, flick detection), the board, collision, movement, SRS rotation and kicks, line
 clears, scoring, levels, 7-bag, lock delay, hold rules, game over and storage parsing. The UI
 has no automated tests; see the manual checklist in [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md).
 

@@ -1,6 +1,7 @@
 import type { GameMode, GameOutcome, Mutator } from '../game/types';
 import type { AchievementId } from '../progress/types';
 import type { ThemeId } from '../theme/themes';
+import type { TutorialStepId } from '../tutorial/steps';
 
 type Pair = readonly [string, string];
 
@@ -50,6 +51,7 @@ export const en = {
       cascade: 'Cascade',
       mutators: 'Mutators',
       daily: 'Daily',
+      tutorial: 'Tutorial',
     } satisfies Record<GameMode, string>,
     summaries: {
       marathon: 'Endless. Faster every 10 lines.',
@@ -59,6 +61,7 @@ export const en = {
       cascade: 'Loose blocks fall after a clear. Chain the reactions.',
       mutators: 'Every level twists a rule: fog, mirror, ghosts, turbo.',
       daily: 'Three minutes, today’s pieces and today’s twist.',
+      tutorial: 'Learn the controls one step at a time.',
     } satisfies Record<GameMode, string>,
   },
 
@@ -230,6 +233,39 @@ export const en = {
     resetConfirm: 'Reset',
     version: (version: string) => `Neon Blocks ${version}`,
     privacy: 'Plays fully offline. No account, no ads, no tracking. Nothing leaves your device.',
+  },
+
+  tutorial: {
+    introTitle: 'Welcome to Neon Blocks',
+    introBody:
+      'One minute, seven moves. Try each one on the board and the next step opens by itself.',
+    start: 'Start the tutorial',
+    skip: 'Skip, I know how to play',
+    skipShort: 'Skip',
+    stepCounter: (n: number, total: number) => `Step ${n} of ${total}`,
+    steps: {
+      move: ['Move', 'Drag left, then right. The piece follows your finger.'],
+      rotate: [
+        'Rotate',
+        'Tap the right side to turn clockwise, the left side to turn back. Turn it twice.',
+      ],
+      softDrop: ['Soft drop', 'Drag down slowly to lower the piece one row at a time.'],
+      hardDrop: ['Hard drop', 'Flick down quickly. The piece drops and locks at once.'],
+      hold: ['Hold', 'Swipe up to put this piece aside. You can swap it back later.'],
+      clear: [
+        'Clear lines',
+        'Tap to stand the I upright, drag it into the gap on the right, then flick down.',
+      ],
+      zone: ['Zone', 'Your Zone meter is full. Tap Zone at the top right to freeze time.'],
+    } satisfies Record<TutorialStepId, Pair>,
+    success: 'Nice!',
+    finishTitle: "You're ready",
+    finishBody:
+      'That is everything you need. Fill rows to clear them, and save Zone for when the stack gets tall.',
+    playMarathon: 'Play Marathon',
+    chooseMode: 'Choose a mode',
+    menu: 'Main menu',
+    replay: 'Step-by-step tutorial',
   },
 
   howToPlay: {

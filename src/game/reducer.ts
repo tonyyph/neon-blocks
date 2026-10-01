@@ -452,7 +452,7 @@ const playingReducer = (state: GameState, action: GameAction): GameState => {
   switch (action.type) {
     case 'move': {
       // The Mirror mutator swaps left and right.
-      const dx = state.mutator === 'mirror' ? -action.dx : action.dx;
+      const dx: -1 | 1 = state.mutator === 'mirror' ? (action.dx === 1 ? -1 : 1) : action.dx;
       const moved = tryMove(state.board, state.active, dx, 0);
       return moved ? withEvents(afterShift(state, moved), { type: 'move', dx }) : state;
     }

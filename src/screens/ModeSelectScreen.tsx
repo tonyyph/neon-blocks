@@ -25,6 +25,7 @@ const ICONS: Record<GameMode, IconName> = {
   cascade: 'link-variant',
   mutators: 'dna',
   daily: 'calendar-star',
+  tutorial: 'school-outline',
 };
 
 /** The record line under a mode: best score or best time, or an invitation if never played. */
