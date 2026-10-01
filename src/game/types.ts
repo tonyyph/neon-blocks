@@ -1,7 +1,14 @@
 export type PieceType = 'I' | 'O' | 'T' | 'S' | 'Z' | 'J' | 'L';
 
-/** A board cell is either empty or holds the type of the piece that locked there. */
-export type Cell = PieceType | null;
+/** Grey rows that Dig mode starts with. */
+export const GARBAGE = 'G';
+/** Lines cleared during Zone, stacked at the bottom until Zone ends. */
+export const ZONE_LINE = 'X';
+
+/**
+ * A board cell: empty, the type of the piece that locked there, a garbage block, or a Zone line.
+ */
+export type Cell = PieceType | typeof GARBAGE | typeof ZONE_LINE | null;
 
 /** Row-major grid, `board[y][x]`. Row 0 is the top of the hidden spawn zone. */
 export type Board = readonly (readonly Cell[])[];
@@ -23,6 +30,23 @@ export interface ActivePiece {
 
 export type GameStatus = 'idle' | 'playing' | 'paused' | 'gameOver';
 
+export type GameMode = 'marathon' | 'sprint' | 'ultra' | 'dig' | 'cascade' | 'mutators' | 'daily';
+
+/** How a game ended: stacked out, reached its goal, or ran out of time. */
+export type GameOutcome = 'topOut' | 'completed' | 'timeUp';
+
+/** Temporary rule changes in Mutators mode (and the daily twist). */
+export type Mutator = 'fog' | 'mirror' | 'invisible' | 'turbo';
+
+export interface ZoneState {
+  /** Charge from 0 to 1. Zone can start once it reaches ZONE_MIN_METER. */
+  meter: number;
+  active: boolean;
+  remainingMs: number;
+  /** Lines banked at the bottom of the board during this Zone. */
+  lines: number;
+}
+
 export type GameEvent =
   | { type: 'move' }
   | { type: 'rotate' }
@@ -31,7 +55,11 @@ export type GameEvent =
   | { type: 'lock' }
   | { type: 'lineClear'; lines: number }
   | { type: 'levelUp'; level: number }
-  | { type: 'gameOver' };
+  | { type: 'chain'; chain: number }
+  | { type: 'zoneStart' }
+  | { type: 'zoneEnd'; lines: number }
+  | { type: 'mutator'; mutator: Mutator }
+  | { type: 'gameOver'; outcome: GameOutcome };
 
 export interface ClearSummary {
   /** Increments with every clear so the UI can re-trigger its label animation. */
@@ -40,6 +68,10 @@ export interface ClearSummary {
   points: number;
   backToBack: boolean;
   combo: number;
+  /** Position in a Cascade chain: 1 for the first clear, 2+ for clears caused by falling blocks. */
+  chain: number;
+  /** Set when this summary is the burst of lines banked during Zone. */
+  zone: boolean;
 }
 
 export interface ClearingRows {
@@ -49,7 +81,11 @@ export interface ClearingRows {
 
 export interface GameState {
   status: GameStatus;
+  mode: GameMode;
   gameId: number;
+  /** Date (YYYY-MM-DD) whose seed and twist a Daily game uses; null for other modes. */
+  dateKey: string | null;
+  outcome: GameOutcome | null;
   board: Board;
   active: ActivePiece | null;
   queue: readonly PieceType[];
@@ -70,19 +106,33 @@ export interface GameState {
   /** Full rows flashing before they collapse. Input is ignored while set. */
   clearing: ClearingRows | null;
   lastClear: ClearSummary | null;
+  /** Play time, which drives Sprint, Ultra and Daily clocks and pieces-per-second. */
+  elapsedMs: number;
+  piecesPlaced: number;
+  tetrises: number;
+  backToBacks: number;
+  maxCombo: number;
+  chain: number;
+  maxChain: number;
+  /** Rows still holding garbage in Dig mode. */
+  garbageLeft: number;
+  mutator: Mutator | null;
+  zone: ZoneState;
+  maxZoneLines: number;
   seed: number;
   /** Side effects produced by the most recent action, for sound and haptics. */
   events: readonly GameEvent[];
 }
 
 export type GameAction =
-  | { type: 'start'; seed: number }
+  | { type: 'start'; seed: number; mode?: GameMode; dateKey?: string }
   | { type: 'tick'; deltaMs: number }
   | { type: 'move'; dx: -1 | 1 }
   | { type: 'rotate'; direction: 1 | -1 }
   | { type: 'softDrop' }
   | { type: 'hardDrop' }
   | { type: 'hold' }
+  | { type: 'activateZone' }
   | { type: 'pause' }
   | { type: 'resume' }
   | { type: 'quit' };

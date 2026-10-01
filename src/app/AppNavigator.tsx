@@ -3,8 +3,11 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useCallback, useEffect, useState } from 'react';
 import { BackHandler } from 'react-native';
 
+import { AchievementsScreen } from '../screens/AchievementsScreen';
 import { HowToPlayScreen } from '../screens/HowToPlayScreen';
 import { MainMenuScreen } from '../screens/MainMenuScreen';
+import { ModeSelectScreen } from '../screens/ModeSelectScreen';
+import { RecordsScreen } from '../screens/RecordsScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { TetrisScreen } from '../screens/TetrisScreen';
 import { ThemesScreen } from '../screens/ThemesScreen';
@@ -15,10 +18,10 @@ import { FONT_ASSETS } from '../theme/fonts';
 
 SplashScreen.preventAutoHideAsync().catch(() => undefined);
 
-type Route = 'menu' | 'game' | 'settings' | 'themes' | 'howToPlay';
+type Route = 'menu' | 'modes' | 'game' | 'records' | 'awards' | 'settings' | 'themes' | 'howToPlay';
 
 /**
- * Five screens and no deep links, so a tiny state machine replaces a navigation library. The game
+ * A handful of screens and no deep links, so a tiny state machine replaces a navigation library. The game
  * store outlives screen changes, which is what lets Settings open from the pause menu and return
  * to the same paused game. Settings and Themes remember where they were opened from.
  */
@@ -64,6 +67,9 @@ export const AppNavigator = () => {
           setRoute(themesReturn);
           return true;
         case 'howToPlay':
+        case 'modes':
+        case 'records':
+        case 'awards':
           setRoute('menu');
           return true;
         case 'game':
@@ -97,13 +103,26 @@ export const AppNavigator = () => {
       return <ThemesScreen onBack={() => setRoute(themesReturn)} />;
     case 'howToPlay':
       return <HowToPlayScreen onBack={() => setRoute('menu')} />;
+    case 'modes':
+      return (
+        <ModeSelectScreen
+          onBack={() => setRoute('menu')}
+          onPlay={(mode) => {
+            startNewGame(mode);
+            setRoute('game');
+          }}
+        />
+      );
+    case 'records':
+      return <RecordsScreen onBack={() => setRoute('menu')} />;
+    case 'awards':
+      return <AchievementsScreen onBack={() => setRoute('menu')} />;
     default:
       return (
         <MainMenuScreen
-          onStart={() => {
-            startNewGame();
-            setRoute('game');
-          }}
+          onPlay={() => setRoute('modes')}
+          onRecords={() => setRoute('records')}
+          onAwards={() => setRoute('awards')}
           onThemes={() => openThemes('menu')}
           onSettings={() => openSettings('menu')}
           onHowToPlay={() => setRoute('howToPlay')}

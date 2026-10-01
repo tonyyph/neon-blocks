@@ -1,26 +1,49 @@
 import { getPieceCells } from './board';
 import { BOARD_WIDTH, HIDDEN_ROWS, NEXT_QUEUE_SIZE } from './constants';
 import { getGhostPiece } from './ghost';
-import type { ActivePiece, Board, GameState, PieceType } from './types';
+import {
+  type ActivePiece,
+  type Board,
+  type GameState,
+  type Mutator,
+  type PieceType,
+  GARBAGE,
+  ZONE_LINE,
+} from './types';
 
 export const selectNextPieces = (state: GameState): readonly PieceType[] =>
   state.queue.slice(0, NEXT_QUEUE_SIZE);
 
 export const EMPTY_CELL = '.';
+/** Fog mutator: the cell's contents are hidden. */
+export const FOG_CELL = '~';
+/** Ghosts mutator: a locked block shown only as a faint outline. */
+export const FADED_CELL = '_';
+/** Rows at the bottom of the visible well that the Fog mutator hides. */
+export const FOG_ROWS = 7;
 
 /**
  * Encodes each visible row as a string, one character per cell: `.` empty, an upper-case piece
- * letter for a block, a lower-case letter for the ghost. Rows are compared by value, so the board
+ * letter for a block, a lower-case letter for the ghost, `G` garbage, `X` a banked Zone line, and
+ * `~` / `_` for the Fog and Ghosts mutators. The active piece and its ghost always show. Rows are compared by value, so the board
  * only re-renders rows whose contents actually changed.
  */
 export const getVisibleRowSignatures = (
   board: Board,
   active: ActivePiece | null,
   showGhost: boolean,
+  mutator: Mutator | null = null,
 ): string[] => {
-  const grid: string[][] = board
-    .slice(HIDDEN_ROWS)
-    .map((row) => row.map((cell) => cell ?? EMPTY_CELL));
+  const visible = board.slice(HIDDEN_ROWS);
+  const fogFrom = visible.length - FOG_ROWS;
+  const grid: string[][] = visible.map((row, y) =>
+    row.map((cell) => {
+      if (mutator === 'fog' && y >= fogFrom) return FOG_CELL;
+      if (cell === null) return EMPTY_CELL;
+      if (mutator === 'invisible' && cell !== GARBAGE && cell !== ZONE_LINE) return FADED_CELL;
+      return cell;
+    }),
+  );
 
   const paint = (piece: ActivePiece, glyph: string) => {
     for (const { x, y } of getPieceCells(piece)) {

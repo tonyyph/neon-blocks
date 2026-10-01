@@ -48,20 +48,24 @@ export const SettingsScreen = ({ onBack, onOpenThemes }: Props) => {
   const { colors } = theme;
   const settings = useSettingsStore((store) => store.settings);
   const update = useSettingsStore((store) => store.update);
-  const resetStats = useStatsStore((store) => store.resetStats);
+  const resetProgress = useStatsStore((store) => store.resetProgress);
 
   const confirmReset = () =>
-    Alert.alert('Reset high score?', 'Your high score and best stats will be erased.', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Reset',
-        style: 'destructive',
-        onPress: () => {
-          resetStats();
-          haptics.success();
+    Alert.alert(
+      'Reset all progress?',
+      'Records, Daily history, stats and awards will be erased. This cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Reset',
+          style: 'destructive',
+          onPress: () => {
+            resetProgress();
+            haptics.success();
+          },
         },
-      },
-    ]);
+      ],
+    );
 
   return (
     <Screen>
@@ -125,7 +129,7 @@ export const SettingsScreen = ({ onBack, onOpenThemes }: Props) => {
         </Group>
 
         <Button
-          label="Reset high score"
+          label="Reset progress"
           icon="delete-outline"
           variant="danger"
           onPress={confirmReset}

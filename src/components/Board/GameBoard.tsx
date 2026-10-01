@@ -13,13 +13,16 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { BOARD_WIDTH, HIDDEN_ROWS, LINE_CLEAR_MS, VISIBLE_ROWS } from '../../game/constants';
+import { MUTATOR_INFO } from '../../game/modes';
 import { getVisibleRowSignatures } from '../../game/selectors';
+import type { Mutator } from '../../game/types';
 import { useGameStore } from '../../store/gameStore';
 import { useSettingsStore } from '../../store/settingsStore';
 import { lighten, withAlpha } from '../../theme/colorUtils';
 import type { Theme } from '../../theme/themes';
 import { useTheme } from '../../theme/useTheme';
 import { Chamfer, CornerBrackets } from '../ui/Chamfer';
+import { Text } from '../ui/Text';
 import { Cell } from './Cell';
 import { ClearCallout } from './ClearCallout';
 
@@ -83,6 +86,25 @@ const Row = memo(({ signature, cellSize, flashing, theme }: RowProps) => (
 ));
 Row.displayName = 'Row';
 
+/** Names the rule currently in force, top-centre of the well. */
+const MutatorBadge = ({ mutator }: { mutator: Mutator }) => {
+  const { colors } = useTheme();
+  return (
+    <View pointerEvents="none" style={styles.badgeLayer}>
+      <Chamfer
+        cut={5}
+        fill={withAlpha(colors.background, 0.85)}
+        stroke={colors.danger}
+        style={styles.badge}
+      >
+        <Text variant="label" color={colors.danger}>
+          {MUTATOR_INFO[mutator].name}
+        </Text>
+      </Chamfer>
+    </View>
+  );
+};
+
 interface Props {
   cellSize: number;
 }
@@ -93,10 +115,12 @@ export const GameBoard = ({ cellSize }: Props) => {
   const active = useGameStore((store) => store.game.active);
   const clearingRows = useGameStore((store) => store.game.clearing?.rows ?? null);
   const ghostEnabled = useSettingsStore((store) => store.settings.ghostEnabled);
+  const mutator = useGameStore((store) => store.game.mutator);
+  const zoneActive = useGameStore((store) => store.game.zone.active);
 
   const rows = useMemo(
-    () => getVisibleRowSignatures(board, active, ghostEnabled),
-    [board, active, ghostEnabled],
+    () => getVisibleRowSignatures(board, active, ghostEnabled, mutator),
+    [board, active, ghostEnabled, mutator],
   );
   const flashing = useMemo(
     () => new Set((clearingRows ?? []).map((y) => y - HIDDEN_ROWS)),
@@ -157,10 +181,25 @@ export const GameBoard = ({ cellSize }: Props) => {
               theme={theme}
             />
           ))}
-          <ScanBar height={gridHeight} color={colors.primary} />
+          {zoneActive ? (
+            <View
+              pointerEvents="none"
+              style={[
+                StyleSheet.absoluteFill,
+                { backgroundColor: withAlpha(colors.secondary, 0.1) },
+              ]}
+            />
+          ) : null}
+          {theme.scanBar ? <ScanBar height={gridHeight} color={colors.primary} /> : null}
         </View>
       </Chamfer>
-      <CornerBrackets color={colors.primary} size={16} thickness={2} inset={-3} />
+      <CornerBrackets
+        color={zoneActive ? colors.secondary : colors.primary}
+        size={16}
+        thickness={2}
+        inset={-3}
+      />
+      {mutator ? <MutatorBadge mutator={mutator} /> : null}
       <ClearCallout />
     </Animated.View>
   );
@@ -170,6 +209,14 @@ const styles = StyleSheet.create({
   frame: { flex: 1 },
   grid: { overflow: 'hidden' },
   scanBar: { position: 'absolute', left: 0, right: 0, top: 0 },
+  badgeLayer: {
+    position: 'absolute',
+    top: BOARD_FRAME + 6,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+  },
+  badge: { paddingHorizontal: 10, paddingVertical: 2 },
   row: {
     flexDirection: 'row',
   },

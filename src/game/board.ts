@@ -1,6 +1,6 @@
 import { BOARD_HEIGHT, BOARD_WIDTH } from './constants';
 import { getPieceOffsets } from './pieces';
-import type { ActivePiece, Board, Cell, Point } from './types';
+import { type ActivePiece, type Board, type Cell, type Point, ZONE_LINE } from './types';
 
 const createEmptyRow = (): Cell[] => Array.from({ length: BOARD_WIDTH }, () => null);
 
@@ -23,7 +23,9 @@ export const mergePiece = (board: Board, piece: ActivePiece): Board => {
   return next;
 };
 
-export const isRowFull = (row: readonly Cell[]): boolean => row.every((cell) => cell !== null);
+/** A row is full when every cell is filled. Banked Zone lines don't count: they stay until Zone ends. */
+export const isRowFull = (row: readonly Cell[]): boolean =>
+  row.every((cell) => cell !== null) && !row.every((cell) => cell === ZONE_LINE);
 
 export const findFullRows = (board: Board): number[] =>
   board.reduce<number[]>((rows, row, y) => (isRowFull(row) ? [...rows, y] : rows), []);

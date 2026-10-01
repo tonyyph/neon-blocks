@@ -26,7 +26,11 @@ export const useHaptics = () => haptics;
 const hapticForEvents = (events: readonly GameEvent[]): (() => void) | null => {
   let feedback: (() => void) | null = null;
   for (const event of events) {
-    if (event.type === 'gameOver') return haptics.error;
+    if (event.type === 'gameOver') {
+      return event.outcome === 'completed' ? haptics.success : haptics.error;
+    }
+    if (event.type === 'zoneEnd' && event.lines > 0) return haptics.heavy;
+    if (event.type === 'zoneStart') feedback = haptics.impact;
     if (event.type === 'lineClear') feedback = event.lines === 4 ? haptics.heavy : haptics.success;
     else if (event.type === 'hardDrop' && !feedback) feedback = haptics.impact;
   }

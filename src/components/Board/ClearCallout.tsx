@@ -8,6 +8,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import type { ClearSummary } from '../../game/types';
+import { getZoneName } from '../../game/zone';
 import { useGameStore } from '../../store/gameStore';
 import { withAlpha } from '../../theme/colorUtils';
 import { useTheme } from '../../theme/useTheme';
@@ -32,7 +33,11 @@ const Callout = ({ summary }: { summary: ClearSummary }) => {
     ],
   }));
 
-  const isTetris = summary.lines === 4;
+  const isTetris = summary.lines === 4 && !summary.zone;
+  const headline = summary.zone
+    ? (getZoneName(summary.lines) ?? `${summary.lines} lines`)
+    : CLEAR_NAMES[summary.lines];
+  const big = isTetris || summary.zone;
   return (
     <Animated.View
       style={[
@@ -41,15 +46,25 @@ const Callout = ({ summary }: { summary: ClearSummary }) => {
         style,
       ]}
     >
-      {isTetris ? (
+      {summary.zone ? (
+        <Text variant="label" color={colors.secondary}>
+          Zone
+        </Text>
+      ) : null}
+      {big ? (
         <GlitchText variant="title" color={colors.primary} jitter={false}>
-          {CLEAR_NAMES[4]}
+          {headline}
         </GlitchText>
       ) : (
         <Text variant="heading" color={colors.text}>
-          {CLEAR_NAMES[summary.lines]}
+          {headline}
         </Text>
       )}
+      {summary.chain > 1 ? (
+        <Text variant="label" color={colors.danger}>
+          {`Chain ×${summary.chain}`}
+        </Text>
+      ) : null}
       {summary.backToBack ? (
         <Text variant="label" color={colors.secondary}>
           Back-to-back

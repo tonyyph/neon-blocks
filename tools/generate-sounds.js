@@ -82,6 +82,34 @@ const RECIPES = {
       arpeggio(['G5', 'C6', 'E6', 'G6'], 60),
       tone({ from: note('C7'), ms: 200, decay: 4, gain: 0.35 }),
     ),
+  // Zone: a slow downward sweep, like time thickening.
+  'zone-start': () =>
+    mix(
+      tone({ from: 880, to: 110, ms: 520, gain: 0.45, decay: 2, wave: Math.sin }),
+      tone({ from: 220, to: 55, ms: 520, gain: 0.3, decay: 2 }),
+    ),
+  // Zone burst: a heavy hit, then a bright rising run.
+  'zone-end': () =>
+    concat(
+      mix(
+        tone({ from: 140, to: 40, ms: 220, gain: 0.8, decay: 4, wave: Math.sin }),
+        tone({ from: 1200, ms: 120, gain: 0.4, noise: 0.9, decay: 6 }),
+      ),
+      arpeggio(['C5', 'G5', 'C6', 'E6', 'G6', 'C7'], 45, 0.35),
+    ),
+  chain: () => arpeggio(['E6', 'B6'], 50, 0.35),
+  // Mutator: a short detuned glitch.
+  mutator: () =>
+    concat(
+      tone({ from: 300, to: 1800, ms: 60, gain: 0.35, decay: 3 }),
+      tone({ from: 1700, to: 240, ms: 80, gain: 0.3, noise: 0.4, decay: 3 }),
+    ),
+  complete: () =>
+    concat(
+      arpeggio(['C5', 'E5', 'G5', 'C6'], 70, 0.4),
+      tone({ from: note('E6'), ms: 140, gain: 0.35, decay: 3 }),
+      tone({ from: note('G6'), ms: 420, gain: 0.4, decay: 2.5 }),
+    ),
   'game-over': () =>
     concat(
       ...['G4', 'E4', 'C4'].map((n) => tone({ from: note(n), ms: 160, gain: 0.45, decay: 2.5 })),

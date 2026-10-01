@@ -6,12 +6,14 @@ import { Chamfer } from '../components/ui/Chamfer';
 import { PressableScale } from '../components/ui/PressableScale';
 import { Screen } from '../components/ui/Screen';
 import { ScreenHeader } from '../components/ui/ScreenHeader';
+import { Text } from '../components/ui/Text';
 import type { PieceType } from '../game/types';
 import { haptics } from '../hooks/useHaptics';
 import { useSettingsStore } from '../store/settingsStore';
 import { spacing } from '../theme/spacing';
 import { THEMES, THEME_ORDER, type Theme } from '../theme/themes';
 import { getTextStyle } from '../theme/typography';
+import { useTheme } from '../theme/useTheme';
 
 /** A little stack of pieces, so each card shows the theme's blocks in use, not just swatches. */
 const SAMPLE: { type: PieceType; x: number; y: number }[] = [
@@ -70,6 +72,7 @@ const ThemeCard = ({
     >
       <Chamfer
         cut={18}
+        shape={theme.shape}
         fill={colors.background}
         stroke={active ? colors.primary : colors.line}
         strokeWidth={active ? 2.5 : 1}
@@ -94,7 +97,7 @@ const ThemeCard = ({
             {theme.tagline}
           </RNText>
           {active ? (
-            <Chamfer cut={5} fill={colors.primary} style={styles.badge}>
+            <Chamfer cut={5} shape={theme.shape} fill={colors.primary} style={styles.badge}>
               <RNText
                 allowFontScaling={false}
                 style={[getTextStyle('label', theme), { color: colors.onPrimary }]}
@@ -114,7 +117,10 @@ interface Props {
   onBack: () => void;
 }
 
+const COLLECTIONS = ['Cyberpunk', 'Crafted'] as const;
+
 export const ThemesScreen = ({ onBack }: Props) => {
+  const { colors } = useTheme();
   const themeId = useSettingsStore((store) => store.settings.themeId);
   const update = useSettingsStore((store) => store.update);
 
@@ -122,17 +128,24 @@ export const ThemesScreen = ({ onBack }: Props) => {
     <Screen>
       <ScreenHeader title="Themes" onBack={onBack} />
       <ScrollView contentContainerStyle={styles.list}>
-        {THEME_ORDER.map((id) => (
-          <ThemeCard
-            key={id}
-            theme={THEMES[id]}
-            active={id === themeId}
-            onSelect={() => {
-              if (id === themeId) return;
-              haptics.tap();
-              update({ themeId: id });
-            }}
-          />
+        {COLLECTIONS.map((collection) => (
+          <View key={collection} style={styles.section}>
+            <Text variant="label" color={colors.textDim}>
+              {collection}
+            </Text>
+            {THEME_ORDER.filter((id) => THEMES[id].collection === collection).map((id) => (
+              <ThemeCard
+                key={id}
+                theme={THEMES[id]}
+                active={id === themeId}
+                onSelect={() => {
+                  if (id === themeId) return;
+                  haptics.tap();
+                  update({ themeId: id });
+                }}
+              />
+            ))}
+          </View>
         ))}
       </ScrollView>
     </Screen>
@@ -140,7 +153,8 @@ export const ThemesScreen = ({ onBack }: Props) => {
 };
 
 const styles = StyleSheet.create({
-  list: { padding: spacing.lg, gap: spacing.lg },
+  list: { padding: spacing.lg, gap: spacing.xl },
+  section: { gap: spacing.md },
   card: {
     flexDirection: 'row',
     alignItems: 'center',

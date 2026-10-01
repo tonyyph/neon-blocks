@@ -1,5 +1,6 @@
 import type { TextStyle } from 'react-native';
 
+import { LINE_BOX } from './fonts';
 import type { Theme } from './themes';
 
 type FontRole = keyof Theme['fonts'];
@@ -26,13 +27,18 @@ const SCALE = {
 
 export type TypographyVariant = keyof typeof SCALE;
 
+/** Every variant, for tests that check the whole scale. */
+export const SCALE_FOR_TESTS = Object.keys(SCALE) as TypographyVariant[];
+
 /** Custom fonts carry their own weight, so no fontWeight is set (Android would fake-bold it). */
 export const getTextStyle = (variant: TypographyVariant, theme: Theme): TextStyle => {
   const step: Step = SCALE[variant];
+  const fontFamily = theme.fonts[step.role];
   return {
-    fontFamily: theme.fonts[step.role],
+    fontFamily,
     fontSize: step.size,
-    lineHeight: step.lineHeight,
+    // Never tighter than the font's own line box, or tall fonts clip (see LINE_BOX).
+    lineHeight: Math.max(step.lineHeight, Math.ceil(step.size * LINE_BOX[fontFamily])),
     letterSpacing: step.letterSpacing,
     textTransform: step.uppercase ? 'uppercase' : 'none',
   };

@@ -8,33 +8,73 @@ import {
 } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
+import type { PanelShape } from '../../theme/themes';
+import { useTheme } from '../../theme/useTheme';
+
 /**
- * Outline with the top-left and bottom-right corners cut off. The cut corner is the shape the
- * whole UI is built from, in place of rounded rectangles.
+ * SVG outline for a panel in the theme's shape. `size` is the shape's characteristic measure: the
+ * corner cut, the corner radius, the notch, or the arch radius.
  */
-export const chamferPath = (width: number, height: number, cut: number, stroke: number): string => {
+export const panelPath = (
+  shape: PanelShape,
+  width: number,
+  height: number,
+  size: number,
+  stroke: number,
+): string => {
   const i = stroke / 2;
-  const c = Math.min(cut, width / 2, height / 2);
-  return `M${c + i},${i} H${width - i} V${height - c - i} L${width - c - i},${height - i} H${i} V${c + i} Z`;
+  const w = width - i;
+  const h = height - i;
+  switch (shape) {
+    case 'square':
+      return `M${i},${i} H${w} V${h} H${i} Z`;
+    case 'round': {
+      const r = Math.min(size * 1.2, (width - stroke) / 2, (height - stroke) / 2);
+      return `M${i + r},${i} H${w - r} A${r},${r} 0 0 1 ${w},${i + r} V${h - r} A${r},${r} 0 0 1 ${w - r},${h} H${i + r} A${r},${r} 0 0 1 ${i},${h - r} V${i + r} A${r},${r} 0 0 1 ${i + r},${i} Z`;
+    }
+    case 'notch': {
+      // Square notches bitten out of each corner, like the corners of a lacquer box lid.
+      const n = Math.min(size * 0.6, width / 4, height / 4);
+      return `M${i + n},${i} H${w - n} V${i + n} H${w} V${h - n} H${w - n} V${h} H${i + n} V${h - n} H${i} V${i + n} H${i + n} Z`;
+    }
+    case 'arch': {
+      // A window: rounded shoulders on top, square sill below.
+      const r = Math.min(size * 1.6, (width - stroke) / 2, (height - stroke) / 2);
+      return `M${i},${h} V${i + r} A${r},${r} 0 0 1 ${i + r},${i} H${w - r} A${r},${r} 0 0 1 ${w},${i + r} V${h} Z`;
+    }
+    default: {
+      const c = Math.min(size, width / 2, height / 2);
+      return `M${c + i},${i} H${w} V${h - c} L${w - c},${h} H${i} V${c + i} Z`;
+    }
+  }
 };
 
 interface Props {
+  /** The shape's size: corner cut, radius, notch or arch, depending on the theme's shape. */
   cut?: number;
   fill?: string;
   stroke?: string;
   strokeWidth?: number;
+  /** Overrides the active theme's shape, e.g. for a theme preview card. */
+  shape?: PanelShape;
   style?: StyleProp<ViewStyle>;
   children?: ReactNode;
 }
 
+/**
+ * A panel outline in the active theme's shape: cut corners for the cyberpunk themes, drafting
+ * squares, candy rounds, lacquer-box notches or gothic arches for the others.
+ */
 export const Chamfer = ({
   cut = 10,
   fill = 'transparent',
   stroke,
   strokeWidth = 1,
+  shape,
   style,
   children,
 }: Props) => {
+  const theme = useTheme();
   const [size, setSize] = useState<{ width: number; height: number } | null>(null);
 
   const onLayout = (event: LayoutChangeEvent) => {
@@ -56,7 +96,13 @@ export const Chamfer = ({
           height={size.height}
         >
           <Path
-            d={chamferPath(size.width, size.height, cut, stroke ? strokeWidth : 0)}
+            d={panelPath(
+              shape ?? theme.shape,
+              size.width,
+              size.height,
+              cut,
+              stroke ? strokeWidth : 0,
+            )}
             fill={fill}
             stroke={stroke}
             strokeWidth={stroke ? strokeWidth : 0}
@@ -75,8 +121,10 @@ interface BracketProps {
   inset?: number;
 }
 
-/** HUD targeting brackets on the four corners of the parent. */
+/** HUD targeting brackets on the four corners of the parent, for themes that use them. */
 export const CornerBrackets = ({ color, size = 14, thickness = 2, inset = 0 }: BracketProps) => {
+  const theme = useTheme();
+  if (!theme.brackets) return null;
   const base = { position: 'absolute' as const, width: size, height: size, borderColor: color };
   return (
     <>

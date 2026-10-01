@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
+  cancelAnimation,
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
@@ -23,16 +24,19 @@ interface Props {
 }
 
 /**
- * Chromatic-aberration text: offset copies in the theme's secondary and danger colours sit
- * behind the main layer, and every few seconds they tear sideways for a few frames.
+ * Title text dressed by the theme. 'glitch' is chromatic aberration: offset copies in the theme's
+ * secondary and danger colours sit behind the main layer, and every few seconds they tear sideways for a few frames. 'pop' is a
+ * solid offset sticker shadow; 'plain' is just the text.
  */
 export const GlitchText = ({ children, variant = 'display', color, jitter = true }: Props) => {
   const theme = useTheme();
   const reduceMotion = useReducedMotion();
   const tear = useSharedValue(0);
 
+  const effect = theme.titleEffect;
+
   useEffect(() => {
-    if (!jitter || reduceMotion) return;
+    if (effect !== 'glitch' || !jitter || reduceMotion) return;
     tear.set(
       withRepeat(
         withSequence(
@@ -44,10 +48,35 @@ export const GlitchText = ({ children, variant = 'display', color, jitter = true
         -1,
       ),
     );
-  }, [jitter, reduceMotion, tear]);
+    return () => cancelAnimation(tear);
+  }, [effect, jitter, reduceMotion, tear]);
 
   const left = useAnimatedStyle(() => ({ transform: [{ translateX: -2 - tear.value }] }));
   const right = useAnimatedStyle(() => ({ transform: [{ translateX: 2 + tear.value }] }));
+
+  if (effect === 'plain') {
+    return (
+      <Text variant={variant} color={color ?? theme.colors.text}>
+        {children}
+      </Text>
+    );
+  }
+
+  if (effect === 'pop') {
+    // A sticker: one solid copy offset down-right in the secondary colour.
+    return (
+      <View>
+        <View style={[styles.layer, styles.pop]} pointerEvents="none">
+          <Text variant={variant} color={theme.colors.secondary}>
+            {children}
+          </Text>
+        </View>
+        <Text variant={variant} color={color ?? theme.colors.text}>
+          {children}
+        </Text>
+      </View>
+    );
+  }
 
   return (
     <View>
@@ -71,4 +100,5 @@ export const GlitchText = ({ children, variant = 'display', color, jitter = true
 const styles = StyleSheet.create({
   layer: { ...StyleSheet.absoluteFill },
   ghost: { opacity: 0.75 },
+  pop: { transform: [{ translateX: 3 }, { translateY: 3 }] },
 });

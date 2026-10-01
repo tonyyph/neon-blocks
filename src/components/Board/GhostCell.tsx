@@ -21,9 +21,15 @@ export const GhostCell = memo(({ type, size, theme }: Props) => {
           {
             borderColor: shade.fill,
             backgroundColor: shade.tint,
-            // The terminal theme draws its ghost as a dashed wireframe.
-            borderStyle: theme.blockStyle === 'chip' ? 'dashed' : 'solid',
-            borderRadius: theme.blockStyle === 'gloss' ? size * 0.18 : 0,
+            // Terminal and Blueprint draw the ghost as a dashed wireframe.
+            borderStyle:
+              theme.blockStyle === 'chip' || theme.blockStyle === 'blueprint' ? 'dashed' : 'solid',
+            borderRadius:
+              theme.blockStyle === 'gloss'
+                ? size * 0.18
+                : theme.blockStyle === 'jelly'
+                  ? size * 0.3
+                  : 0,
           },
         ]}
       />

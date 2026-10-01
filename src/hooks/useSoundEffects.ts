@@ -15,6 +15,11 @@ const SOUNDS = {
   tetris: require('../../assets/sounds/tetris.wav'),
   levelUp: require('../../assets/sounds/level-up.wav'),
   gameOver: require('../../assets/sounds/game-over.wav'),
+  zoneStart: require('../../assets/sounds/zone-start.wav'),
+  zoneEnd: require('../../assets/sounds/zone-end.wav'),
+  chain: require('../../assets/sounds/chain.wav'),
+  mutator: require('../../assets/sounds/mutator.wav'),
+  complete: require('../../assets/sounds/complete.wav'),
 } as const;
 
 type SoundName = keyof typeof SOUNDS;
@@ -28,12 +33,23 @@ export const soundsForEvents = (events: readonly GameEvent[]): SoundName[] => {
   for (const event of events) {
     switch (event.type) {
       case 'gameOver':
-        return ['gameOver'];
+        return [event.outcome === 'completed' ? 'complete' : 'gameOver'];
+      case 'zoneStart':
+      case 'mutator':
+        result = event.type;
+        break;
+      case 'zoneEnd':
+        if (event.lines > 0) result = 'zoneEnd';
+        break;
+      case 'chain':
+        result = 'chain';
+        break;
       case 'lineClear':
-        result = event.lines === 4 ? 'tetris' : result === 'levelUp' ? result : 'clear';
+        if (result === 'levelUp' || result === 'chain' || result === 'mutator') break;
+        result = event.lines === 4 ? 'tetris' : 'clear';
         break;
       case 'levelUp':
-        result = 'levelUp';
+        if (result !== 'mutator') result = 'levelUp';
         break;
       case 'hardDrop':
         action = 'hardDrop';

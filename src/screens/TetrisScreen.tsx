@@ -9,13 +9,16 @@ import { PauseOverlay } from '../components/Overlay/PauseOverlay';
 import { HoldPiece } from '../components/Preview/HoldPiece';
 import { NextQueue } from '../components/Preview/NextQueue';
 import { PREVIEW_BOX_H } from '../components/Preview/PiecePreview';
+import { ZoneButton } from '../components/Controls/ZoneButton';
 import { Chamfer } from '../components/ui/Chamfer';
 import { Icon } from '../components/ui/Icon';
+import { Panel } from '../components/ui/Panel';
 import { PressableScale } from '../components/ui/PressableScale';
 import { Readout } from '../components/ui/Readout';
 import { Screen } from '../components/ui/Screen';
 import { Text } from '../components/ui/Text';
 import { BOARD_WIDTH, VISIBLE_ROWS } from '../game/constants';
+import { MODES, type ModeConfig } from '../game/modes';
 import { useGameLoop } from '../hooks/useGameLoop';
 import { useGameEventHaptics } from '../hooks/useHaptics';
 import { useGestureControls } from '../hooks/useGestureControls';
@@ -25,6 +28,7 @@ import { dispatchGame, startNewGame, useGameStore } from '../store/gameStore';
 import { MIN_TOUCH, spacing } from '../theme/spacing';
 import { useTheme } from '../theme/useTheme';
 import { clamp } from '../utils/clamp';
+import { formatCountdown, formatTime } from '../utils/formatTime';
 
 const PLAYFIELD_PADDING = spacing.md;
 const STRIP_GAP = spacing.sm;
@@ -50,11 +54,58 @@ const computeLayout = (width: number, height: number): Layout => {
 
 const SCORE_DIGITS = 7;
 
-const Header = () => {
+/** Sprint and Dig race the clock: it counts up, in hundredths. */
+const ElapsedClock = () => {
+  const { colors } = useTheme();
+  const centis = useGameStore((store) => Math.floor(store.game.elapsedMs / 10));
+  return (
+    <Text variant="score" color={colors.primary}>
+      {formatTime(centis * 10)}
+    </Text>
+  );
+};
+
+const ScoreReadout = () => {
   const { colors } = useTheme();
   const score = useGameStore((store) => store.game.score);
-  const level = useGameStore((store) => store.game.level);
-  const lines = useGameStore((store) => store.game.lines);
+  return <Readout value={score} digits={SCORE_DIGITS} variant="score" color={colors.primary} />;
+};
+
+/** The line under the main readout: what is left to do, or how long is left. */
+const GoalLine = ({ config }: { config: ModeConfig }) => {
+  const { colors } = useTheme();
+  const text = useGameStore(({ game }) => {
+    if (config.lineGoal !== null) return `${Math.max(0, config.lineGoal - game.lines)} lines to go`;
+    if (config.garbageRows > 0) return `${game.garbageLeft} garbage rows left`;
+    if (config.timeLimitMs !== null) {
+      return `${formatCountdown(config.timeLimitMs - game.elapsedMs)} left`;
+    }
+    return null;
+  });
+  if (!text) return null;
+  return (
+    <Text variant="caption" color={colors.textDim}>
+      {text}
+    </Text>
+  );
+};
+
+const ModeChip = ({ name }: { name: string }) => {
+  const { colors } = useTheme();
+  return (
+    <Chamfer cut={7} fill={colors.surface} stroke={colors.line} style={styles.modeChip}>
+      <Text variant="label" color={colors.textDim}>
+        {name}
+      </Text>
+    </Chamfer>
+  );
+};
+
+const Header = () => {
+  const { colors } = useTheme();
+  const mode = useGameStore((store) => store.game.mode);
+  const config = MODES[mode];
+  const racing = config.record === 'time';
   return (
     <View style={styles.header}>
       <PressableScale
@@ -69,25 +120,38 @@ const Header = () => {
       </PressableScale>
       <View style={styles.scoreBlock}>
         <Text variant="label" color={colors.textDim}>
-          Score
+          {racing ? 'Time' : 'Score'}
         </Text>
-        <Readout value={score} digits={SCORE_DIGITS} variant="score" color={colors.primary} />
+        {racing ? <ElapsedClock /> : <ScoreReadout />}
+        <GoalLine config={config} />
       </View>
-      <View style={styles.meta}>
-        <View style={styles.metaRow}>
-          <Text variant="label" color={colors.textDim}>
-            Lv
-          </Text>
-          <Readout value={level} digits={2} variant="stat" color={colors.text} />
-        </View>
-        <View style={styles.metaRow}>
-          <Text variant="label" color={colors.textDim}>
-            Ln
-          </Text>
-          <Readout value={lines} digits={3} variant="stat" color={colors.text} />
-        </View>
+      <View style={styles.right}>
+        {config.zone ? <ZoneButton /> : <ModeChip name={config.name} />}
       </View>
     </View>
+  );
+};
+
+/** Level and lines, compact, at the end of the preview strip. */
+const LevelLines = () => {
+  const { colors } = useTheme();
+  const level = useGameStore((store) => store.game.level);
+  const lines = useGameStore((store) => store.game.lines);
+  return (
+    <Panel style={styles.levelPanel}>
+      <View style={styles.metaRow}>
+        <Text variant="label" color={colors.textDim}>
+          Lv
+        </Text>
+        <Readout value={level} digits={2} variant="stat" color={colors.text} />
+      </View>
+      <View style={styles.metaRow}>
+        <Text variant="label" color={colors.textDim}>
+          Ln
+        </Text>
+        <Readout value={lines} digits={3} variant="stat" color={colors.text} />
+      </View>
+    </Panel>
   );
 };
 
@@ -134,6 +198,7 @@ export const TetrisScreen = ({ onOpenSettings, onExitToMenu }: Props) => {
                 <View style={styles.strip}>
                   <HoldPiece cellSize={layout.previewCell} />
                   <NextQueue cellSize={layout.previewCell} />
+                  <LevelLines />
                 </View>
                 <GameBoard cellSize={layout.cellSize} />
               </View>
@@ -146,13 +211,13 @@ export const TetrisScreen = ({ onOpenSettings, onExitToMenu }: Props) => {
       {status === 'paused' ? (
         <PauseOverlay
           onResume={() => dispatchGame({ type: 'resume' })}
-          onRestart={startNewGame}
+          onRestart={() => startNewGame()}
           onSettings={onOpenSettings}
           onMenu={exitToMenu}
         />
       ) : null}
       {status === 'gameOver' ? (
-        <GameOverOverlay onRestart={startNewGame} onMenu={exitToMenu} />
+        <GameOverOverlay onRestart={() => startNewGame()} onMenu={exitToMenu} />
       ) : null}
     </Screen>
   );
@@ -173,7 +238,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   scoreBlock: { alignItems: 'center' },
-  meta: { width: MIN_TOUCH + 28, alignItems: 'flex-end' },
+  right: { width: 76, alignItems: 'flex-end' },
+  modeChip: { paddingHorizontal: spacing.sm, paddingVertical: spacing.xs + 2 },
+  levelPanel: { justifyContent: 'center', gap: 2 },
   metaRow: { flexDirection: 'row', alignItems: 'baseline', gap: spacing.xs },
   touchArea: { flex: 1 },
   playfield: {

@@ -15,16 +15,26 @@ import { spacing } from '../theme/spacing';
 import { useTheme } from '../theme/useTheme';
 
 interface Props {
-  onStart: () => void;
+  onPlay: () => void;
+  onRecords: () => void;
+  onAwards: () => void;
   onThemes: () => void;
   onSettings: () => void;
   onHowToPlay: () => void;
 }
 
-export const MainMenuScreen = ({ onStart, onThemes, onSettings, onHowToPlay }: Props) => {
+export const MainMenuScreen = ({
+  onPlay,
+  onRecords,
+  onAwards,
+  onThemes,
+  onSettings,
+  onHowToPlay,
+}: Props) => {
   const theme = useTheme();
   const { colors } = theme;
-  const stats = useStatsStore((store) => store.stats);
+  const marathon = useStatsStore((store) => store.progress.records.marathon);
+  const games = useStatsStore((store) => store.progress.totals.games);
 
   return (
     <Screen style={styles.screen}>
@@ -61,18 +71,26 @@ export const MainMenuScreen = ({ onStart, onThemes, onSettings, onHowToPlay }: P
 
       <View style={styles.record}>
         <Text variant="label" color={colors.textDim}>
-          High score
+          Marathon best
         </Text>
-        <Readout value={stats.highScore} digits={7} variant="score" color={colors.text} />
-        {stats.gamesPlayed > 0 ? (
+        <Readout value={marathon?.bestScore ?? 0} digits={7} variant="score" color={colors.text} />
+        {games > 0 ? (
           <Text variant="caption" color={colors.textDim}>
-            {`Best run: ${stats.bestLines} lines, level ${stats.bestLevel}`}
+            {`${games.toLocaleString()} ${games === 1 ? 'game' : 'games'} played`}
           </Text>
         ) : null}
       </View>
 
       <View style={styles.actions}>
-        <Button label="Start" icon="play" variant="primary" onPress={onStart} />
+        <Button label="Play" icon="play" variant="primary" onPress={onPlay} />
+        <View style={styles.row}>
+          <View style={styles.half}>
+            <Button label="Records" icon="chart-box-outline" onPress={onRecords} />
+          </View>
+          <View style={styles.half}>
+            <Button label="Awards" icon="trophy-outline" onPress={onAwards} />
+          </View>
+        </View>
         <View style={styles.row}>
           <View style={styles.half}>
             <Button label="Themes" icon="palette-outline" onPress={onThemes} />
@@ -81,7 +99,11 @@ export const MainMenuScreen = ({ onStart, onThemes, onSettings, onHowToPlay }: P
             <Button label="Settings" icon="cog-outline" onPress={onSettings} />
           </View>
         </View>
-        <Button label="How to play" icon="help-circle-outline" onPress={onHowToPlay} />
+        <PressableScale accessibilityRole="button" onPress={onHowToPlay} style={styles.link}>
+          <Text variant="caption" color={colors.textDim}>
+            How to play
+          </Text>
+        </PressableScale>
       </View>
     </Screen>
   );
@@ -111,4 +133,5 @@ const styles = StyleSheet.create({
   },
   row: { flexDirection: 'row', gap: spacing.md },
   half: { flex: 1 },
+  link: { alignSelf: 'center', paddingVertical: spacing.sm, paddingHorizontal: spacing.lg },
 });

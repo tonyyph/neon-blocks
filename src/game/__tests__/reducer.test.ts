@@ -251,7 +251,8 @@ describe('game over', () => {
     const next = gameReducer(state, { type: 'hardDrop' });
     expect(next.status).toBe('gameOver');
     expect(next.active).toBeNull();
-    expect(next.events).toContainEqual({ type: 'gameOver' });
+    expect(next.events).toContainEqual({ type: 'gameOver', outcome: 'topOut' });
+    expect(next.outcome).toBe('topOut');
   });
 
   it('ignores gameplay input after game over, and start begins a fresh game', () => {

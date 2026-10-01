@@ -148,7 +148,143 @@ const HorizonArt = ({ theme, width, height, intensity }: ArtProps) => {
   );
 };
 
-const ART = { circuit: CircuitArt, rain: RainArt, horizon: HorizonArt } as const;
+/** Drafting film: fine and major grid lines plus a few compass circles. */
+const GraphArt = ({ theme, width, height, intensity }: ArtProps) => {
+  const alpha = intensity === 'full' ? 1 : 0.6;
+  const minor = withAlpha(theme.colors.text, 0.06 * alpha);
+  const major = withAlpha(theme.colors.text, 0.13 * alpha);
+  const circles = useMemo(() => {
+    const random = createRandom(5);
+    return Array.from({ length: 4 }, () => ({
+      cx: random.next() * width,
+      cy: random.next() * height,
+      r: 40 + random.next() * 90,
+    }));
+  }, [width, height]);
+  return (
+    <>
+      <Defs>
+        <Pattern id="minor" patternUnits="userSpaceOnUse" width={16} height={16}>
+          <Path d="M16 0 H0 V16" fill="none" stroke={minor} strokeWidth={1} />
+        </Pattern>
+        <Pattern id="major" patternUnits="userSpaceOnUse" width={80} height={80}>
+          <Path d="M80 0 H0 V80" fill="none" stroke={major} strokeWidth={1.2} />
+        </Pattern>
+      </Defs>
+      <Rect x={0} y={0} width={width} height={height} fill="url(#minor)" />
+      <Rect x={0} y={0} width={width} height={height} fill="url(#major)" />
+      {circles.map(({ cx, cy, r }, i) => (
+        <Circle
+          key={i}
+          cx={cx}
+          cy={cy}
+          r={r}
+          fill="none"
+          stroke={withAlpha(theme.colors.secondary, 0.16 * alpha)}
+          strokeDasharray="6 5"
+        />
+      ))}
+    </>
+  );
+};
+
+/** Polka dots in two colours. */
+const DotsArt = ({ theme, width, height, intensity }: ArtProps) => {
+  const alpha = intensity === 'full' ? 0.14 : 0.08;
+  return (
+    <>
+      <Defs>
+        <Pattern id="dots" patternUnits="userSpaceOnUse" width={36} height={36}>
+          <Circle cx={9} cy={9} r={5} fill={withAlpha(theme.colors.primary, alpha)} />
+          <Circle cx={27} cy={27} r={5} fill={withAlpha(theme.colors.secondary, alpha)} />
+        </Pattern>
+      </Defs>
+      <Rect x={0} y={0} width={width} height={height} fill="url(#dots)" />
+    </>
+  );
+};
+
+/** Seigaiha: rows of overlapping concentric waves, traced in gold. */
+const WavesArt = ({ theme, width, height, intensity }: ArtProps) => {
+  const stroke = withAlpha(theme.colors.primary, intensity === 'full' ? 0.12 : 0.07);
+  const arcs = (cx: number, cy: number) =>
+    [24, 17, 10].map((r) => (
+      <Circle key={`${cx}-${cy}-${r}`} cx={cx} cy={cy} r={r} fill="none" stroke={stroke} />
+    ));
+  return (
+    <>
+      <Defs>
+        <Pattern id="waves" patternUnits="userSpaceOnUse" width={48} height={24}>
+          {arcs(24, 24)}
+          {arcs(0, 12)}
+          {arcs(48, 12)}
+        </Pattern>
+      </Defs>
+      <Rect x={0} y={height * 0.45} width={width} height={height * 0.55} fill="url(#waves)" />
+    </>
+  );
+};
+
+/** A rose window: rings, spokes and a crown of petals. */
+const RoseArt = ({ theme, width, height, intensity }: ArtProps) => {
+  const cx = width / 2;
+  const cy = height * (intensity === 'full' ? 0.27 : 0.2);
+  const r = width * 0.44;
+  const lead = withAlpha(theme.colors.primary, intensity === 'full' ? 0.22 : 0.1);
+  const glass = intensity === 'full' ? 0.1 : 0.05;
+  const hues = [
+    theme.colors.secondary,
+    theme.colors.danger,
+    theme.colors.success,
+    theme.colors.primary,
+  ];
+  const spokes = Array.from({ length: 12 }, (_, i) => (i / 12) * Math.PI * 2);
+  return (
+    <>
+      {spokes.map((angle, i) => (
+        <Circle
+          key={`petal${i}`}
+          cx={cx + Math.cos(angle) * r * 0.62}
+          cy={cy + Math.sin(angle) * r * 0.62}
+          r={r * 0.2}
+          fill={withAlpha(hues[i % hues.length], glass)}
+          stroke={lead}
+        />
+      ))}
+      {[1, 0.38, 0.16].map((k) => (
+        <Circle
+          key={`ring${k}`}
+          cx={cx}
+          cy={cy}
+          r={r * k}
+          fill="none"
+          stroke={lead}
+          strokeWidth={1.5}
+        />
+      ))}
+      {spokes.map((angle, i) => (
+        <Line
+          key={`spoke${i}`}
+          x1={cx + Math.cos(angle) * r * 0.16}
+          y1={cy + Math.sin(angle) * r * 0.16}
+          x2={cx + Math.cos(angle) * r}
+          y2={cy + Math.sin(angle) * r}
+          stroke={lead}
+        />
+      ))}
+    </>
+  );
+};
+
+const ART = {
+  circuit: CircuitArt,
+  rain: RainArt,
+  horizon: HorizonArt,
+  graph: GraphArt,
+  dots: DotsArt,
+  waves: WavesArt,
+  rose: RoseArt,
+} as const;
 
 /** Themed gradient plus static art. Drawn once per theme and screen size; no animation. */
 export const Backdrop = memo(({ intensity = 'full' }: { intensity?: BackdropIntensity }) => {

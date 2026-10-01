@@ -36,6 +36,16 @@ const CONTROLS: { icon: IconName; title: string; body: string }[] = [
     title: 'Clear lines',
     body: 'Fill a row to clear it. Every 10 lines speeds up the game.',
   },
+  {
+    icon: 'timer-sand',
+    title: 'Zone',
+    body: 'Clears charge the Zone meter. Tap Zone once it is half full: gravity stops, cleared lines pile up at the bottom, and when time runs out they all burst at once.',
+  },
+  {
+    icon: 'dna',
+    title: 'Modes',
+    body: 'Sprint and Dig race the clock. Ultra and Daily give you a few minutes. Cascade lets loose blocks fall into chains. Mutators bend a rule every level.',
+  },
 ];
 
 const SCORES: [string, string][] = [

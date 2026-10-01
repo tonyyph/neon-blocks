@@ -49,30 +49,60 @@ Everything the app uses ships in Expo Go, so no development build is needed to p
 - High score, games played, best lines and best level persisted with AsyncStorage
 - Auto-pause when the app leaves the foreground; Android back button pauses the game
 
+## Modes
+
+| Mode     | Rules                                                                 | Record          |
+| -------- | --------------------------------------------------------------------- | --------------- |
+| Marathon | Endless, faster every 10 lines                                        | score           |
+| Sprint   | Clear 40 lines                                                        | fastest time    |
+| Ultra    | Two minutes                                                           | score           |
+| Dig      | Ten garbage rows with one hole each; clear them all                   | fastest time    |
+| Cascade  | After a clear, loose groups fall as rigid shapes; new full rows chain | score, chain    |
+| Mutators | Each level brings a twist: Fog, Mirror, Ghosts or Turbo               | score           |
+| Daily    | Three minutes; the date fixes the seed and the twist for everyone     | first run a day |
+
+**Zone** (Marathon, Ultra, Mutators, Daily): clears charge a meter (16 lines fill it). At half or
+more, the Zone button freezes gravity for up to 20 s; clears bank at the bottom as Zone lines and
+burst together when it ends for 75 × lines² × level (an Octoris at 8, a Decahexatris at 16).
+
+Mode rules live in `src/game/modes.ts`; the reducer reads them, so a new mode is mostly a new
+config entry. Cascade settling is `src/game/cascade.ts`, Zone banking `src/game/zone.ts`, garbage
+`src/game/garbage.ts`.
+
+## Progress
+
+Records per mode, all-time totals, the last ten games, the Daily history and streak, and 22
+achievements are folded in by one pure function, `applyGameResult` (`src/progress/records.ts`),
+and stored under `neonblocks.progress.v2`. The v1 high score migrates into Marathon's record on
+first launch. The game-over card can be shared as an image (`react-native-view-shot` +
+`expo-sharing`).
+
 ## Themes
 
-Four cyberpunk themes, switched from the menu (theme chip or Themes) or Settings. Each one changes
-the palette, the block shape, the backdrop art and, for the terminal theme, the typeface.
+Eight themes in two collections, switched from the menu or Settings. Each changes the palette,
+the block shape, the panel shape, the title treatment, the backdrop art and the typefaces.
 
-| Theme          | Palette                      | Blocks              | Backdrop                  |
-| -------------- | ---------------------------- | ------------------- | ------------------------- |
-| Night City     | hazard yellow, cyan, crimson | hollow neon tubes   | circuit traces            |
-| Neon Rain      | magenta, cyan on indigo      | glossy              | slanted rain              |
-| Outrun         | hot pink, orange on violet   | bevelled            | striped sun, horizon grid |
-| Amber Terminal | amber phosphor               | chips, dashed ghost | heavy scanlines           |
+| Theme          | Collection | Panels        | Blocks              | Backdrop                  |
+| -------------- | ---------- | ------------- | ------------------- | ------------------------- |
+| Night City     | Cyberpunk  | cut corners   | hollow neon tubes   | circuit traces            |
+| Neon Rain      | Cyberpunk  | cut corners   | glossy              | slanted rain              |
+| Outrun         | Cyberpunk  | cut corners   | bevelled            | striped sun, horizon grid |
+| Amber Terminal | Cyberpunk  | cut corners   | chips, dashed ghost | heavy scanlines           |
+| Blueprint      | Crafted    | square        | hatched outlines    | graph paper               |
+| Sugar Rush     | Crafted    | round (light) | jelly sweets        | polka dots                |
+| Kintsugi       | Crafted    | notched       | lacquer, gold seam  | seigaiha waves            |
+| Cathedral      | Crafted    | arched        | stained glass       | rose window               |
 
-Shared across all: cut-corner (chamfered) panels and buttons, a HUD frame with corner brackets
-around the board, a slow scan bar sweeping the well, RGB-split glitch titles, and a fixed-width
-score readout with dim leading zeros. The scan bar and title glitch stop when the system asks for
-reduced motion.
+Cyberpunk themes add the glitch title, the board scan bar and HUD corner brackets; the scan bar
+and glitch stop under Reduce Motion.
 
-Fonts: Orbitron (display and numbers), Chakra Petch (UI), Share Tech Mono (terminal theme). All are
-SIL Open Font License, bundled via `@expo-google-fonts/*` one weight at a time, so the app stays
-offline.
+Fonts (all SIL Open Font License, bundled one weight at a time): Orbitron, Chakra Petch, Share
+Tech Mono, Architects Daughter, Baloo 2, Cinzel, Cormorant Garamond, UnifrakturMaguntia.
 
-To add a theme, add an entry to `SPECS` in `src/theme/themes.ts`. `src/theme/__tests__/themes.test.ts`
-checks every theme for text contrast (WCAG AA), button-label contrast, piece-versus-well contrast
-and seven distinct piece colours, so a new palette cannot ship unreadable.
+Two tests guard every theme: `themes.test.ts` checks WCAG contrast for text, button labels and
+pieces against the well; `fonts.test.ts` re-measures each bundled font file and fails if any text
+style's line height is tighter than the font's own line box (tall fonts such as Baloo 2 need
+1.6× their size or they clip).
 
 ## Architecture
 
@@ -114,7 +144,7 @@ Decisions worth knowing before changing things:
 
 ## Tests
 
-`pnpm test` runs 92 tests over the theme palettes (contrast), the gesture maths (axis lock, step counting, flick detection), the board, collision, movement, SRS rotation and kicks, line
+`pnpm test` runs 160 tests over the modes, Zone, Cascade, progress and achievements, the theme palettes and font metrics, the gesture maths (axis lock, step counting, flick detection), the board, collision, movement, SRS rotation and kicks, line
 clears, scoring, levels, 7-bag, lock delay, hold rules, game over and storage parsing. The UI
 has no automated tests; see the manual checklist in [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md).
 
