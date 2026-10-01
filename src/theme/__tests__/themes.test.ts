@@ -33,6 +33,14 @@ describe.each(THEME_ORDER.map((id) => [id, THEMES[id]] as const))('%s theme', (_
     expect(contrast(colors.onPrimary, colors.primary)).toBeGreaterThanOrEqual(4.5);
   });
 
+  it('keeps toggles readable in both states (WCAG non-text 3:1)', () => {
+    // Off: dim knob on the raised track, outlined in the same dim colour against the panel.
+    expect(contrast(colors.textDim, colors.surfaceRaised)).toBeGreaterThanOrEqual(3);
+    expect(contrast(colors.textDim, colors.surface)).toBeGreaterThanOrEqual(3);
+    // On: knob in the primary-button text colour on the primary track.
+    expect(contrast(colors.onPrimary, colors.primary)).toBeGreaterThanOrEqual(3);
+  });
+
   it('makes every piece stand out from the empty well (3:1)', () => {
     for (const type of PIECE_TYPES) {
       expect(contrast(theme.pieces[type], colors.well)).toBeGreaterThanOrEqual(3);

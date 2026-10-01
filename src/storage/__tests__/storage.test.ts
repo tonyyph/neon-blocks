@@ -4,12 +4,21 @@ describe('parseSettings', () => {
   it('treats nothing stored as a first launch: defaults, tutorial still to do', () => {
     const first = parseSettings(null);
     expect(first).toMatchObject({ ...DEFAULT_SETTINGS, language: first.language });
+    expect(first.setupDone).toBe(false);
     expect(first.tutorialDone).toBe(false);
+    expect(parseSettings('nope').setupDone).toBe(false);
     expect(parseSettings('nope').tutorialDone).toBe(false);
   });
 
   it('assumes players with saved settings from before the tutorial already know the game', () => {
-    expect(parseSettings({ soundEnabled: true }).tutorialDone).toBe(true);
+    expect(parseSettings({ soundEnabled: true })).toMatchObject({
+      setupDone: true,
+      tutorialDone: true,
+    });
+    expect(parseSettings({ setupDone: true, tutorialDone: false })).toMatchObject({
+      setupDone: true,
+      tutorialDone: false,
+    });
     expect(parseSettings({ tutorialDone: false }).tutorialDone).toBe(false);
   });
 

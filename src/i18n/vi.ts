@@ -232,6 +232,26 @@ export const vi: Strings = {
       'Chơi hoàn toàn offline. Không cần tài khoản, không quảng cáo, không theo dõi. Dữ liệu chỉ nằm trên máy của bạn.',
   },
 
+  setup: {
+    progress: (n, total) => `${n}/${total}`,
+    next: 'Tiếp tục',
+    back: 'Quay lại',
+    finish: 'Bắt đầu hướng dẫn',
+    later: 'Những lựa chọn này đều đổi lại được trong Cài đặt.',
+    language: {
+      title: 'Chào mừng đến Neon Blocks',
+      body: 'Trước tiên, chọn ngôn ngữ bạn muốn dùng trong game.',
+    },
+    theme: {
+      title: 'Chọn giao diện',
+      body: 'Có tám phong cách. Chạm vào một cái là cả game đổi theo để bạn xem thử.',
+    },
+    feel: {
+      title: 'Âm thanh và cảm giác',
+      body: 'Chọn những gì bạn muốn nghe và cảm nhận khi chơi.',
+    },
+  },
+
   tutorial: {
     introTitle: 'Chào mừng đến Neon Blocks',
     introBody:

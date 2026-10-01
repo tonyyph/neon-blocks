@@ -14,7 +14,9 @@
 
 Run on at least one small screen (iPhone SE / 5" Android) and one large (Pro Max class).
 
-- [ ] Fresh install opens the tutorial with no way out but finishing it (no Skip, no Main menu
+- [ ] Fresh install opens setup first: language → theme → sound/haptics/ghost; each choice
+      applies at once; Back works; the last button goes straight into tutorial step 1
+- [ ] Tutorial after setup has no way out but finishing it (no Skip, no Main menu
       in pause); killing the app midway brings it back; after finishing it never returns
 - [ ] Settings from the tutorial's pause menu returns to the same step
 - [ ] Replaying from How to play shows Skip

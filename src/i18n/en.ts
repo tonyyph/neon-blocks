@@ -235,6 +235,26 @@ export const en = {
     privacy: 'Plays fully offline. No account, no ads, no tracking. Nothing leaves your device.',
   },
 
+  setup: {
+    progress: (n: number, total: number) => `${n} of ${total}`,
+    next: 'Continue',
+    back: 'Back',
+    finish: 'Start the tutorial',
+    later: 'You can change any of this later in Settings.',
+    language: {
+      title: 'Welcome to Neon Blocks',
+      body: 'First, pick the language you want to play in.',
+    },
+    theme: {
+      title: 'Pick a look',
+      body: 'Eight themes. Tap one and the whole game changes to show it.',
+    },
+    feel: {
+      title: 'Sound and feel',
+      body: 'Choose what you want to hear and feel while you play.',
+    },
+  },
+
   tutorial: {
     introTitle: 'Welcome to Neon Blocks',
     introBody:

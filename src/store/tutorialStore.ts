@@ -10,8 +10,11 @@ interface TutorialStore {
    * pause menu has no way back to the main menu. Replays from How to play are optional.
    */
   mandatory: boolean;
-  /** Opens the tutorial from its welcome card. */
-  open: (mandatory: boolean) => void;
+  /**
+   * Opens the tutorial on its welcome card, or straight on step 1 when the player is arriving
+   * from first-run setup and has already been welcomed.
+   */
+  open: (mandatory: boolean, startAt?: 'intro' | 'step') => void;
   goTo: (phase: TutorialPhase, index?: number) => void;
 }
 
@@ -23,6 +26,6 @@ export const useTutorialStore = create<TutorialStore>((set) => ({
   phase: 'intro',
   index: 0,
   mandatory: false,
-  open: (mandatory) => set({ phase: 'intro', index: 0, mandatory }),
+  open: (mandatory, startAt = 'intro') => set({ phase: startAt, index: 0, mandatory }),
   goTo: (phase, index) => set((state) => ({ phase, index: index ?? state.index })),
 }));

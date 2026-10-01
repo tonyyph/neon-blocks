@@ -78,6 +78,11 @@ prepared position (`Scenario`: board, scripted pieces, Zone charge) in the gravi
 (`src/tutorial/steps.ts`). A coach card under the board animates the gesture; Skip is always one
 tap away on replays.
 
+A fresh install starts with a three-page setup (`src/screens/SetupScreen.tsx`): language, theme
+(the whole app re-themes as you tap), then sound, haptics and ghost piece. Its last button leads
+straight into step 1 of the tutorial. Setup comes back on every launch until it is completed
+(`settings.setupDone`).
+
 On a fresh install the tutorial is mandatory: it opens before anything else, with no Skip and no
 Main menu in the pause menu, and it comes back on every launch until it is finished. Progress
 sits in `src/store/tutorialStore.ts`, so a trip to Settings from the pause menu returns to the

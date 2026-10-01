@@ -44,12 +44,6 @@ export const TutorialScreen = ({ onExit, onOpenSettings }: Props) => {
   const progress = useRef<StepProgress>(EMPTY_PROGRESS);
   const step = TUTORIAL_STEPS[index];
 
-  // On a fresh start, clear whatever game was left behind (paused, finished…). Coming back from
-  // Settings mid-step keeps the paused tutorial board as it was.
-  useEffect(() => {
-    if (useTutorialStore.getState().phase === 'intro') dispatchGame({ type: 'quit' });
-  }, []);
-
   const loadStep = useCallback((stepIndex: number) => {
     progress.current = EMPTY_PROGRESS;
     dispatchGame({
@@ -59,6 +53,18 @@ export const TutorialScreen = ({ onExit, onOpenSettings }: Props) => {
       scenario: TUTORIAL_STEPS[stepIndex].scenario,
     });
   }, []);
+
+  // On arrival: the welcome card clears whatever game was left behind; opening straight on a
+  // step loads that step's board. Coming back from Settings mid-step keeps the paused board.
+  useEffect(() => {
+    const { phase: openedAt, index: openedIndex } = useTutorialStore.getState();
+    if (openedAt === 'intro') {
+      dispatchGame({ type: 'quit' });
+      return;
+    }
+    const { game } = useGameStore.getState();
+    if (game.mode !== 'tutorial' || game.status === 'idle') loadStep(openedIndex);
+  }, [loadStep]);
 
   const begin = () => {
     loadStep(0);

@@ -12,6 +12,8 @@ export type PersistedSettings = {
   controlMode: ControlMode;
   themeId: ThemeId;
   language: Language;
+  /** Set once the player has been through first-run setup (language, theme, sound). */
+  setupDone: boolean;
   /** Set once the player finishes or skips the first-run tutorial. */
   tutorialDone: boolean;
 };
@@ -23,6 +25,7 @@ export const DEFAULT_SETTINGS: PersistedSettings = {
   controlMode: 'gestures',
   themeId: DEFAULT_THEME_ID,
   language: 'en',
+  setupDone: false,
   tutorialDone: false,
 };
 
@@ -41,6 +44,7 @@ export const parseSettings = (value: unknown): PersistedSettings => {
     themeId: isThemeId(value.themeId) ? value.themeId : DEFAULT_THEME_ID,
     language: isLanguage(value.language) ? value.language : deviceLanguage(),
     // Saved settings without this field belong to players from before the tutorial existed.
+    setupDone: typeof value.setupDone === 'boolean' ? value.setupDone : true,
     tutorialDone: typeof value.tutorialDone === 'boolean' ? value.tutorialDone : true,
   };
 };

@@ -307,6 +307,12 @@ export const Backdrop = memo(({ intensity = 'full' }: { intensity?: BackdropInte
 });
 Backdrop.displayName = 'Backdrop';
 
+/**
+ * Scales each theme's scanline value into overlay opacity. Kept low enough that the lines read as
+ * texture on dark areas rather than stripes across bright buttons and toggles.
+ */
+const SCANLINE_STRENGTH = 3;
+
 /** CRT scanlines laid over everything. Strength comes from the theme; 0 disables it. */
 export const Scanlines = memo(() => {
   const theme = useTheme();
@@ -325,7 +331,7 @@ export const Scanlines = memo(() => {
         width={width}
         height={height}
         fill="url(#scan)"
-        opacity={theme.scanlines * 5}
+        opacity={theme.scanlines * SCANLINE_STRENGTH}
       />
     </Svg>
   );

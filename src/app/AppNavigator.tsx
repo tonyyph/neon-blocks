@@ -9,6 +9,7 @@ import { MainMenuScreen } from '../screens/MainMenuScreen';
 import { ModeSelectScreen } from '../screens/ModeSelectScreen';
 import { RecordsScreen } from '../screens/RecordsScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
+import { SetupScreen } from '../screens/SetupScreen';
 import { TetrisScreen } from '../screens/TetrisScreen';
 import { ThemesScreen } from '../screens/ThemesScreen';
 import { TutorialScreen } from '../screens/TutorialScreen';
@@ -29,7 +30,8 @@ type Route =
   | 'settings'
   | 'themes'
   | 'howToPlay'
-  | 'tutorial';
+  | 'tutorial'
+  | 'setup';
 
 /**
  * A handful of screens and no deep links, so a tiny state machine replaces a navigation library. The game
@@ -51,9 +53,12 @@ export const AppNavigator = () => {
       useSettingsStore.getState().hydrate(),
       useStatsStore.getState().hydrate(),
     ]).finally(() => {
-      // A fresh install must play the tutorial before anything else, and keeps getting it on
-      // every launch until it has been finished.
-      if (!useSettingsStore.getState().settings.tutorialDone) {
+      // A fresh install goes through setup (language, theme, sound) and then the mandatory
+      // tutorial before anything else. Each comes back on every launch until it is finished.
+      const { setupDone, tutorialDone } = useSettingsStore.getState().settings;
+      if (!setupDone) {
+        setRoute('setup');
+      } else if (!tutorialDone) {
         useTutorialStore.getState().open(true);
         setRoute('tutorial');
       }
@@ -128,6 +133,20 @@ export const AppNavigator = () => {
           onTutorial={() => {
             useTutorialStore.getState().open(false);
             setRoute('tutorial');
+          }}
+        />
+      );
+    case 'setup':
+      return (
+        <SetupScreen
+          onDone={() => {
+            useSettingsStore.getState().update({ setupDone: true });
+            if (useSettingsStore.getState().settings.tutorialDone) {
+              setRoute('menu');
+            } else {
+              useTutorialStore.getState().open(true, 'step');
+              setRoute('tutorial');
+            }
           }}
         />
       );

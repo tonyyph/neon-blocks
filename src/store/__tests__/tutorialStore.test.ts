@@ -15,6 +15,11 @@ describe('tutorial store', () => {
     expect(useTutorialStore.getState().mandatory).toBe(false);
   });
 
+  it('can open straight on step 1 for players coming from first-run setup', () => {
+    useTutorialStore.getState().open(true, 'step');
+    expect(useTutorialStore.getState()).toMatchObject({ phase: 'step', index: 0, mandatory: true });
+  });
+
   it('keeps its place across screen changes until reopened', () => {
     useTutorialStore.getState().goTo('step', 3);
     useTutorialStore.getState().goTo('success');

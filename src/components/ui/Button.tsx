@@ -48,7 +48,15 @@ export const Button = ({ label, onPress, variant = 'secondary', icon }: Props) =
       >
         <View style={styles.content}>
           {icon ? <Icon name={icon} size={20} color={look.text} /> : null}
-          <Text variant="heading" color={look.text}>
+          {/* One line always: wide display faces (Playfair SC, Cinzel) shrink a little instead. */}
+          <Text
+            variant="heading"
+            color={look.text}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.7}
+            style={styles.label}
+          >
             {label}
           </Text>
         </View>
@@ -60,9 +68,10 @@ export const Button = ({ label, onPress, variant = 'secondary', icon }: Props) =
 const styles = StyleSheet.create({
   button: {
     minHeight: MIN_TOUCH + 8,
-    paddingHorizontal: spacing.xl,
+    paddingHorizontal: spacing.lg,
     justifyContent: 'center',
   },
+  label: { flexShrink: 1 },
   content: {
     flexDirection: 'row',
     alignItems: 'center',
