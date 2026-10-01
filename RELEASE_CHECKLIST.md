@@ -53,9 +53,11 @@ pnpm submit:ios       # uploads the latest build to App Store Connect → TestFl
 pnpm release:ios      # verify + build + submit
 ```
 
-One-time: the App Store Connect app record cannot be created with an API key. Create it by hand
-(App Store Connect → Apps → + → New App, bundle id `com.neonblocks.cyber`), then put its numeric
-Apple ID into `eas.json` → `submit.production.ios.ascAppId`.
+The App Store Connect app is "Neon Blocks: Cyber Stack" (`ascAppId` 6818053046). `eas submit`
+does not read `.env.eas`: it only uses an API key named in `eas.json`
+(`ascApiKeyPath` / `ascApiKeyId` / `ascApiKeyIssuerId`). Without those it falls back to an Apple
+ID sign-in with SMS 2FA. The key id and issuer id there are identifiers, not secrets; the `.p8`
+stays gitignored. `pnpm asc:app-id` looks the app id up from the bundle id.
 
 The marketing version comes from `expo.version` in `app.json`; bump it by hand per release.
 
