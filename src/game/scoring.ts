@@ -9,7 +9,7 @@ export const COMBO_POINTS = 50;
 export const getLineClearScore = (lines: number, level: number): number =>
   (LINE_CLEAR_POINTS[lines] ?? 0) * level;
 
-/** A Tetris straight after another Tetris earns half its value again. */
+/** A four-line clear straight after another earns half its value again. */
 export const getBackToBackBonus = (lines: number, level: number, backToBack: boolean): number =>
   lines === 4 && backToBack ? getLineClearScore(4, level) / 2 : 0;
 

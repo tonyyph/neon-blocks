@@ -8,7 +8,7 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import type { ClearSummary } from '../../game/types';
-import { getZoneName } from '../../game/zone';
+import { getZoneTier } from '../../game/zone';
 import { formatNumber, useT } from '../../i18n';
 import { useGameStore } from '../../store/gameStore';
 import { withAlpha } from '../../theme/colorUtils';
@@ -34,11 +34,13 @@ const Callout = ({ summary }: { summary: ClearSummary }) => {
     ],
   }));
 
-  const isTetris = summary.lines === 4 && !summary.zone;
-  const headline = summary.zone
-    ? (getZoneName(summary.lines) ?? t.game.zoneLines(summary.lines))
-    : t.game.clears[summary.lines];
-  const big = isTetris || summary.zone;
+  const zoneName = (lines: number) => {
+    const tier = getZoneTier(lines);
+    return tier === null ? t.game.zoneLines(lines) : t.game.zoneTiers[tier];
+  };
+  const isQuad = summary.lines === 4 && !summary.zone;
+  const headline = summary.zone ? zoneName(summary.lines) : t.game.clears[summary.lines];
+  const big = isQuad || summary.zone;
   return (
     <Animated.View
       style={[

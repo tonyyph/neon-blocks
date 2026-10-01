@@ -149,7 +149,7 @@ describe('drops and scoring', () => {
     expect(collapsed.board.flat().filter(Boolean)).toHaveLength(3);
   });
 
-  it('scores a Tetris and a back-to-back Tetris with combo', () => {
+  it('scores a four-line clear and a back-to-back one with combo', () => {
     const board = boardFrom([
       '#########.',
       '#########.',

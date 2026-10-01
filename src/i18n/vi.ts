@@ -2,7 +2,7 @@ import type { Strings } from './en';
 
 /**
  * Tiếng Việt. Viết như người chơi Việt vẫn nói, không dịch từng chữ: thuật ngữ game quen thuộc
- * (Tetris, Combo, Zone, Marathon) giữ nguyên, phần còn lại dùng từ tự nhiên.
+ * (Combo, Zone, Marathon) giữ nguyên, phần còn lại dùng từ tự nhiên.
  */
 export const vi: Strings = {
   locale: 'vi-VN',
@@ -96,7 +96,13 @@ export const vi: Strings = {
     zoneSeconds: (n) => `${n} giây`,
     zoneActiveA11y: (n) => `Zone đang chạy, còn ${n} giây`,
     zoneChargeA11y: (percent) => `Zone, đã nạp ${percent}%`,
-    clears: ['', 'Một hàng', 'Hai hàng', 'Ba hàng', 'Tetris'],
+    clears: ['', 'Một hàng', 'Hai hàng', 'Ba hàng', 'Bốn hàng'],
+    zoneTiers: {
+      8: 'Siêu tân tinh',
+      12: 'Cực siêu tân tinh',
+      16: 'Điểm kỳ dị',
+      20: 'Vụ Nổ Lớn',
+    },
     zoneLines: (n) => `${n} hàng`,
     backToBack: 'Liên tiếp',
     combo: (n) => `Combo ×${n}`,
@@ -139,7 +145,7 @@ export const vi: Strings = {
     allTime: 'Tổng cộng',
     games: 'Số ván',
     lines: 'Số hàng đã xóa',
-    tetrises: 'Số lần Tetris',
+    tetrises: 'Số lần xóa 4 hàng',
     pieces: 'Số khối đã đặt',
     pps: 'Khối mỗi giây',
     longestCombo: 'Combo dài nhất',
@@ -159,8 +165,8 @@ export const vi: Strings = {
     items: {
       'first-game': ['Khởi động', 'Chơi xong ván đầu tiên.'],
       'first-tetris': ['Bốn trong một', 'Xóa 4 hàng chỉ với một khối.'],
-      'tetris-25': ['Thợ xếp tầng', 'Ghi tổng cộng 25 lần Tetris.'],
-      'back-to-back': ['Thêm lần nữa', 'Ghi hai lần Tetris liền nhau.'],
+      'tetris-25': ['Thợ xếp tầng', 'Xóa 4 hàng cùng lúc tổng cộng 25 lần.'],
+      'back-to-back': ['Thêm lần nữa', 'Xóa 4 hàng cùng lúc hai lần liền nhau.'],
       'combo-5': ['Vào nhịp', 'Xóa hàng liên tục với 6 khối liền nhau.'],
       'lines-100': ['Trăm hàng', 'Xóa tổng cộng 100 hàng.'],
       'lines-1000': ['Nghìn hàng', 'Xóa tổng cộng 1.000 hàng.'],
@@ -173,8 +179,8 @@ export const vi: Strings = {
       'dig-90s': ['Máy xúc', 'Đào xong trong chưa tới 90 giây.'],
       'chain-3': ['Phản ứng dây chuyền', 'Tạo chuỗi 3 lần nổ ở chế độ Dây chuyền.'],
       'chain-5': ['Bùng nổ', 'Tạo chuỗi 5 lần nổ ở chế độ Dây chuyền.'],
-      'zone-8': ['Octoris', 'Dồn được 8 hàng trong một lần Zone.'],
-      'zone-16': ['Decahexatris', 'Dồn được 16 hàng trong một lần Zone.'],
+      'zone-8': ['Siêu tân tinh', 'Dồn được 8 hàng trong một lần Zone.'],
+      'zone-16': ['Điểm kỳ dị', 'Dồn được 16 hàng trong một lần Zone.'],
       'mutator-5': ['Thích nghi', 'Lên cấp 5 ở chế độ Đột biến.'],
       'daily-first': ['Điểm danh', 'Chơi một lượt Thử thách ngày.'],
       'daily-streak-7': ['Bảy ngày liền', 'Chơi Thử thách ngày 7 ngày liên tiếp.'],
@@ -308,9 +314,9 @@ export const vi: Strings = {
       ['Một hàng', '100'],
       ['Hai hàng', '300'],
       ['Ba hàng', '500'],
-      ['Tetris', '800'],
+      ['Bốn hàng', '800'],
     ],
     pointsNote:
-      'Ghi Tetris ngay sau một Tetris khác được thưởng thêm 50%. Xóa hàng liên tục qua nhiều khối sẽ cộng điểm combo.',
+      'Xóa 4 hàng ngay sau một lần xóa 4 hàng khác được thưởng thêm 50%. Xóa hàng liên tục qua nhiều khối sẽ cộng điểm combo.',
   },
 };

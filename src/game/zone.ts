@@ -32,18 +32,10 @@ export const releaseZoneRows = (board: Board): Board => {
 /** Zone pays off steeply: 4 lines 1,200, 8 lines 4,800, 16 lines 19,200 (× level). */
 export const getZoneScore = (lines: number, level: number): number => 75 * lines * lines * level;
 
-export const ZONE_NAMES: Record<number, string> = {
-  8: 'Octoris',
-  12: 'Dodecatris',
-  16: 'Decahexatris',
-  20: 'Perfectris',
-};
+/** Banked-line counts that earn a named burst. Names live in the i18n dictionaries. */
+export const ZONE_TIERS = [8, 12, 16, 20] as const;
+export type ZoneTier = (typeof ZONE_TIERS)[number];
 
-/** The grandest name the banked count has earned, Tetris Effect style. */
-export const getZoneName = (lines: number): string | null => {
-  const earned = Object.keys(ZONE_NAMES)
-    .map(Number)
-    .filter((threshold) => lines >= threshold)
-    .pop();
-  return earned === undefined ? null : ZONE_NAMES[earned];
-};
+/** The highest tier the banked count has reached, or null below the first. */
+export const getZoneTier = (lines: number): ZoneTier | null =>
+  ZONE_TIERS.filter((tier) => lines >= tier).pop() ?? null;

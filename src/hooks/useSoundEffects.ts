@@ -12,7 +12,7 @@ const SOUNDS = {
   lock: require('../../assets/sounds/lock.wav'),
   hardDrop: require('../../assets/sounds/hard-drop.wav'),
   clear: require('../../assets/sounds/clear.wav'),
-  tetris: require('../../assets/sounds/tetris.wav'),
+  quad: require('../../assets/sounds/quad.wav'),
   levelUp: require('../../assets/sounds/level-up.wav'),
   gameOver: require('../../assets/sounds/game-over.wav'),
   zoneStart: require('../../assets/sounds/zone-start.wav'),
@@ -46,7 +46,7 @@ export const soundsForEvents = (events: readonly GameEvent[]): SoundName[] => {
         break;
       case 'lineClear':
         if (result === 'levelUp' || result === 'chain' || result === 'mutator') break;
-        result = event.lines === 4 ? 'tetris' : 'clear';
+        result = event.lines === 4 ? 'quad' : 'clear';
         break;
       case 'levelUp':
         if (result !== 'mutator') result = 'levelUp';

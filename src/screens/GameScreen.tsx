@@ -172,7 +172,7 @@ interface Props {
   hideGameOver?: boolean;
 }
 
-export const TetrisScreen = ({
+export const GameScreen = ({
   onOpenSettings,
   onExitToMenu,
   footer,

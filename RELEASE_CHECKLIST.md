@@ -41,7 +41,7 @@ Run on at least one small screen (iPhone SE / 5" Android) and one large (Pro Max
       after relaunch
 - [ ] With Reduce Motion on, the scan bar and title glitch stop
 - [ ] Ghost piece shows and hides with the setting
-- [ ] Line clears flash, collapse and score correctly; Tetris call-out shows
+- [ ] Line clears flash, collapse and score correctly; Quad call-out shows
 - [ ] Level rises every 10 lines and the game speeds up
 - [ ] Pause → Resume / Restart / Settings / Main Menu all work; Settings returns to the
       paused game
@@ -76,6 +76,12 @@ stays gitignored. `pnpm asc:app-id` looks the app id up from the bundle id.
 The marketing version comes from `expo.version` in `app.json`; bump it by hand per release.
 
 ## Store listing
+
+Privacy Policy and Support pages: source in `site/`, live at
+<https://neonblocks-app.vercel.app/privacy> and <https://neonblocks-app.vercel.app/support>
+(Vercel team DeepOcean, project `neon-blocks`, Vercel Authentication turned off so the pages are
+public). To publish an edit: `npx vercel deploy site --prod --scope deep-ocean`, then check the
+pages open without signing in.
 
 Everything to paste into App Store Connect (texts in EN and VI, privacy answers, age rating,
 review notes, screenshot plan) is in [docs/APP_STORE.md](docs/APP_STORE.md).

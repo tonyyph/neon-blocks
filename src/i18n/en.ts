@@ -1,4 +1,5 @@
 import type { GameMode, GameOutcome, Mutator } from '../game/types';
+import type { ZoneTier } from '../game/zone';
 import type { AchievementId } from '../progress/types';
 import type { ThemeId } from '../theme/themes';
 import type { TutorialStepId } from '../tutorial/steps';
@@ -101,7 +102,14 @@ export const en = {
     zoneSeconds: (n: number) => `${n}s`,
     zoneActiveA11y: (n: number) => `Zone active, ${n} seconds left`,
     zoneChargeA11y: (percent: number) => `Zone, ${percent}% charged`,
-    clears: ['', 'Single', 'Double', 'Triple', 'Tetris'],
+    clears: ['', 'Single', 'Double', 'Triple', 'Quad'],
+    /** Names for big Zone bursts, by the number of lines banked. */
+    zoneTiers: {
+      8: 'Supernova',
+      12: 'Hypernova',
+      16: 'Singularity',
+      20: 'Big Bang',
+    } satisfies Record<ZoneTier, string>,
     zoneLines: (n: number) => `${n} lines`,
     backToBack: 'Back-to-back',
     combo: (n: number) => `Combo ×${n}`,
@@ -144,7 +152,7 @@ export const en = {
     allTime: 'All time',
     games: 'Games',
     lines: 'Lines',
-    tetrises: 'Tetrises',
+    tetrises: 'Quads',
     pieces: 'Pieces',
     pps: 'Pieces per second',
     longestCombo: 'Longest combo',
@@ -164,8 +172,8 @@ export const en = {
     items: {
       'first-game': ['Boot sequence', 'Finish your first game.'],
       'first-tetris': ['Four at once', 'Clear four lines with one piece.'],
-      'tetris-25': ['Quad stacker', 'Clear 25 Tetrises in total.'],
-      'back-to-back': ['Encore', 'Score a Tetris straight after another.'],
+      'tetris-25': ['Quad stacker', 'Clear four lines at once 25 times in total.'],
+      'back-to-back': ['Encore', 'Clear four lines at once twice in a row.'],
       'combo-5': ['Rhythm', 'Clear lines with six pieces in a row.'],
       'lines-100': ['Century', 'Clear 100 lines in total.'],
       'lines-1000': ['Thousand rows', 'Clear 1,000 lines in total.'],
@@ -178,8 +186,8 @@ export const en = {
       'dig-90s': ['Excavator', 'Finish Dig in under 90 seconds.'],
       'chain-3': ['Chain reaction', 'Set off a 3-link chain in Cascade.'],
       'chain-5': ['Meltdown', 'Set off a 5-link chain in Cascade.'],
-      'zone-8': ['Octoris', 'Bank 8 lines in one Zone.'],
-      'zone-16': ['Decahexatris', 'Bank 16 lines in one Zone.'],
+      'zone-8': ['Supernova', 'Bank 8 lines in one Zone.'],
+      'zone-16': ['Singularity', 'Bank 16 lines in one Zone.'],
       'mutator-5': ['Adaptive', 'Reach level 5 in Mutators.'],
       'daily-first': ['Clocked in', 'Play a Daily challenge.'],
       'daily-streak-7': ['Seven days', 'Play the Daily seven days running.'],
@@ -311,10 +319,10 @@ export const en = {
       ['Single', '100'],
       ['Double', '300'],
       ['Triple', '500'],
-      ['Tetris', '800'],
+      ['Quad', '800'],
     ] as Pair[],
     pointsNote:
-      'A Tetris straight after another scores half again. Clearing on consecutive pieces builds a combo bonus.',
+      'A Quad straight after another scores half again. Clearing on consecutive pieces builds a combo bonus.',
   },
 };
 

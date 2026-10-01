@@ -14,7 +14,7 @@ import { useTutorialStore } from '../store/tutorialStore';
 import { spacing } from '../theme/spacing';
 import { useTheme } from '../theme/useTheme';
 import { EMPTY_PROGRESS, type StepProgress, TUTORIAL_STEPS, applyEvent } from '../tutorial/steps';
-import { TetrisScreen } from './TetrisScreen';
+import { GameScreen } from './GameScreen';
 
 /** How long "Nice!" stays up before the next step's board loads. */
 const SUCCESS_PAUSE_MS = 1100;
@@ -116,7 +116,7 @@ export const TutorialScreen = ({ onExit, onOpenSettings }: Props) => {
 
   return (
     <View style={styles.root}>
-      <TetrisScreen
+      <GameScreen
         onOpenSettings={onOpenSettings}
         onExitToMenu={mandatory ? undefined : () => exit('menu')}
         onRestart={() => loadStep(index)}

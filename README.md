@@ -36,9 +36,9 @@ Everything the app uses ships in Expo Go, so no development build is needed to p
 - Gravity by level (`max(100, 1000 − (level − 1) × 80)` ms), level up every 10 lines
 - 500 ms lock delay that move/rotate can restart up to 15 times per row reached, so a piece
   cannot be stalled forever
-- Scoring: soft drop +1/row, hard drop +2/row, 100/300/500/800 × level, back-to-back Tetris
+- Scoring: soft drop +1/row, hard drop +2/row, 100/300/500/800 × level, back-to-back Quad (four-line clear)
   +50%, combo +50 × combo × level
-- Line clear flash, clear call-outs (Tetris, back-to-back, combo), hard-drop jolt, menu
+- Line clear flash, clear call-outs (Quad, back-to-back, combo), hard-drop jolt, menu
   button press scale, fading overlays
 - Gesture controls over the whole play area: drag left/right to move (one column per cell of
   finger travel), drag down to soft drop, flick down to hard drop, swipe up to hold, tap to
@@ -63,7 +63,7 @@ Everything the app uses ships in Expo Go, so no development build is needed to p
 
 **Zone** (Marathon, Ultra, Mutators, Daily): clears charge a meter (16 lines fill it). At half or
 more, the Zone button freezes gravity for up to 20 s; clears bank at the bottom as Zone lines and
-burst together when it ends for 75 × lines² × level (an Octoris at 8, a Decahexatris at 16).
+burst together when it ends for 75 × lines² × level (Supernova at 8 lines, Hypernova at 12, Singularity at 16, Big Bang at 20).
 
 Mode rules live in `src/game/modes.ts`; the reducer reads them, so a new mode is mostly a new
 config entry. Cascade settling is `src/game/cascade.ts`, Zone banking `src/game/zone.ts`, garbage
@@ -72,7 +72,7 @@ config entry. Cascade settling is `src/game/cascade.ts`, Zone banking `src/game/
 ## Tutorial
 
 New players start with a seven-step interactive tutorial on a real board: move, rotate, soft
-drop, hard drop, hold, clear lines (a Tetris into a prepared well) and Zone. Each step loads a
+drop, hard drop, hold, clear lines (a four-line clear into a prepared well) and Zone. Each step loads a
 prepared position (`Scenario`: board, scripted pieces, Zone charge) in the gravity-free
 `tutorial` mode, watches game events and moves on once the player has actually done the move
 (`src/tutorial/steps.ts`). A coach card under the board animates the gesture; Skip is always one
@@ -132,9 +132,11 @@ depend on a value are functions, so each language orders words its own way. Read
 `useT()` in components or `getT()` elsewhere; numbers and dates go through `formatNumber` /
 `formatDay` (12.345 and 01/10/2026 in Vietnamese).
 
-The Vietnamese is written the way players talk, not word for word: Tetris, Combo, Zone and
-Marathon stay as they are; everything else is natural Vietnamese. `i18n.test.ts` fails if a
-Vietnamese string is identical to its English source unless it is on the keep-as-is list.
+The Vietnamese is written the way players talk, not word for word: Combo, Zone and Marathon
+stay as they are; everything else is natural Vietnamese. `i18n.test.ts` fails if a
+Vietnamese string is identical to its English source unless it is on the keep-as-is list, and
+fails if any string in either language uses a Tetris trademark: the four-line clear is a "Quad"
+("Bốn hàng") and the Zone tiers have their own names.
 
 Five theme fonts have no Vietnamese glyphs (Orbitron, Share Tech Mono, Architects Daughter,
 Cinzel, UnifrakturMaguntia). Each has a companion that does (Tektur, JetBrains Mono, Patrick
@@ -155,7 +157,7 @@ src/
   hooks/       Game loop, gesture controls, haptics, sound, game-over recording
   storage/     AsyncStorage load/save with validation; failures never crash the game
   components/  Board, Controls, Preview, Overlay, ui primitives
-  screens/     MainMenu, Tetris, Settings, HowToPlay
+  screens/     MainMenu, Game, Settings, HowToPlay
   app/         App root and AppNavigator (a small state machine, not a library)
   theme/       Themes, fonts, type scale, spacing, colour helpers
 tools/         Asset generators (icons, sounds)

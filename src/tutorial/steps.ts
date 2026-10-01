@@ -40,7 +40,7 @@ export const EMPTY_PROGRESS: StepProgress = {
 };
 
 /** Four rows full except the rightmost column: one vertical I clears them all at once. */
-const tetrisWell = (): Board => {
+const quadWell = (): Board => {
   const board = createEmptyBoard().map((row) => [...row]);
   for (let i = 1; i <= 4; i += 1) {
     board[BOARD_HEIGHT - i] = Array.from({ length: BOARD_WIDTH }, (_, x): Cell =>
@@ -84,7 +84,7 @@ export const TUTORIAL_STEPS: readonly TutorialStep[] = [
   {
     id: 'clear',
     demo: 'flickDown',
-    scenario: { board: tetrisWell(), pieces: ['I', 'O', 'T'] },
+    scenario: { board: quadWell(), pieces: ['I', 'O', 'T'] },
     done: (p) => p.linesCleared > 0,
   },
   {

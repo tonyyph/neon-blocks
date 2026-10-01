@@ -12,14 +12,14 @@ màn hình trong App Store Connect. Các khối nội dung có thể copy dán t
 
 ## 0. Việc phải xong trước khi bấm Submit
 
-| #   | Việc                                                                                                                     | Vì sao                                                                                                                                                                                                     |
-| --- | ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | **Bỏ chữ "Tetris" khỏi giao diện game** (đang có 13 chỗ: chữ hiện khi xóa 4 hàng, thành tích, bảng điểm trong Cách chơi) | "Tetris" là thương hiệu của The Tetris Company, họ thường xuyên yêu cầu gỡ game trên App Store. Đề xuất thay bằng **"Quad"** (EN) / **"Bốn hàng"** (VI). Metadata trong tài liệu này đã không dùng chữ đó. |
-| 2   | **Build mới và upload** (`pnpm release:ios`)                                                                             | Bản trên TestFlight hiện tại (1.0.0 build 1) build từ trước khi có chế độ chơi, giao diện mới, tiếng Việt và hướng dẫn.                                                                                    |
-| 3   | **Đưa Privacy Policy và trang Support lên một URL công khai**                                                            | Bắt buộc với mọi app. Gợi ý: bật GitHub Pages cho repo, hoặc một trang Notion công khai. Nội dung có sẵn ở `PRIVACY.md`.                                                                                   |
-| 4   | **Điền email liên hệ** vào `PRIVACY.md` (dòng "Contact")                                                                 | Apple và người dùng cần một kênh liên hệ thật.                                                                                                                                                             |
-| 5   | **Chơi thử trọn vẹn trên iPhone thật**: cài mới → cài đặt → hướng dẫn 7 bước → một ván                                   | Reviewer làm đúng luồng này. Đặc biệt kiểm tra cử chỉ vuốt mạnh để thả nhanh (ngưỡng tốc độ chưa được chỉnh trên máy thật).                                                                                |
-| 6   | Chụp screenshot (mục 4)                                                                                                  | Bắt buộc ít nhất 1 ảnh cỡ 6.9".                                                                                                                                                                            |
+| #   | Việc                                                                                                                                                                                                                          | Vì sao                                                                                                                      |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| 1   | ~~Bỏ chữ "Tetris" khỏi giao diện game~~ **Đã xong**: thay bằng "Quad" / "Bốn hàng"; tên các mức Zone lấy từ Tetris Effect (Octoris, Decahexatris…) cũng đã đổi. Test `i18n.test.ts` chặn các từ này quay lại.                 | "Tetris" là thương hiệu của The Tetris Company.                                                                             |
+| 2   | **Build mới và upload** (`pnpm release:ios`)                                                                                                                                                                                  | Bản trên TestFlight hiện tại (1.0.0 build 1) build từ trước khi có chế độ chơi, giao diện mới, tiếng Việt và hướng dẫn.     |
+| 3   | ~~Đưa Privacy Policy và Support lên URL công khai~~ **Đã xong**: <https://neonblocks-app.vercel.app/privacy> và <https://neonblocks-app.vercel.app/support> (Vercel, team DeepOcean, project `neon-blocks`, nguồn ở `site/`). | Bắt buộc với mọi app.                                                                                                       |
+| 4   | ~~Điền email liên hệ~~ **Đã xong**: tonyphvincent@gmail.com (trong `PRIVACY.md` và cả hai trang web).                                                                                                                         | Apple và người dùng cần một kênh liên hệ thật.                                                                              |
+| 5   | **Chơi thử trọn vẹn trên iPhone thật**: cài mới → cài đặt → hướng dẫn 7 bước → một ván                                                                                                                                        | Reviewer làm đúng luồng này. Đặc biệt kiểm tra cử chỉ vuốt mạnh để thả nhanh (ngưỡng tốc độ chưa được chỉnh trên máy thật). |
+| 6   | Chụp screenshot (mục 4)                                                                                                                                                                                                       | Bắt buộc ít nhất 1 ảnh cỡ 6.9".                                                                                             |
 
 ---
 
@@ -146,11 +146,11 @@ xếp gạch,xếp hình,giải đố,trí tuệ,offline,thử thách,cổ đi�
 
 ### 3.4 URLs
 
-| Trường             | Bắt buộc               | Giá trị                               |
-| ------------------ | ---------------------- | ------------------------------------- |
-| Support URL        | Có                     | _URL trang hỗ trợ (mục 0, việc số 3)_ |
-| Marketing URL      | Không                  | bỏ trống                              |
-| Privacy Policy URL | Có (ở mục App Privacy) | _URL công khai của `PRIVACY.md`_      |
+| Trường             | Bắt buộc               | Giá trị                                        |
+| ------------------ | ---------------------- | ---------------------------------------------- |
+| Support URL        | Có                     | `https://neonblocks-app.vercel.app/support`    |
+| Marketing URL      | Không                  | `https://neonblocks-app.vercel.app` (tùy chọn) |
+| Privacy Policy URL | Có (ở mục App Privacy) | `https://neonblocks-app.vercel.app/privacy`    |
 
 ### 3.5 What's New
 

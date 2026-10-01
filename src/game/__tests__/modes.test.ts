@@ -17,7 +17,7 @@ import {
 import {
   ZONE_FULL_DURATION_MS,
   bankZoneRows,
-  getZoneName,
+  getZoneTier,
   getZoneScore,
   isZoneRow,
   releaseZoneRows,
@@ -194,9 +194,10 @@ describe('Zone', () => {
   it('scores steeply and names big zones', () => {
     expect(getZoneScore(4, 1)).toBe(1200);
     expect(getZoneScore(16, 2)).toBe(38400);
-    expect(getZoneName(7)).toBeNull();
-    expect(getZoneName(9)).toBe('Octoris');
-    expect(getZoneName(16)).toBe('Decahexatris');
+    expect(getZoneTier(7)).toBeNull();
+    expect(getZoneTier(9)).toBe(8);
+    expect(getZoneTier(16)).toBe(16);
+    expect(getZoneTier(25)).toBe(20);
   });
 
   it('needs half a meter, freezes gravity, banks clears and bursts at the end', () => {

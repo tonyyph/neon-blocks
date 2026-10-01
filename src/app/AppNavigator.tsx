@@ -10,7 +10,7 @@ import { ModeSelectScreen } from '../screens/ModeSelectScreen';
 import { RecordsScreen } from '../screens/RecordsScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { SetupScreen } from '../screens/SetupScreen';
-import { TetrisScreen } from '../screens/TetrisScreen';
+import { GameScreen } from '../screens/GameScreen';
 import { ThemesScreen } from '../screens/ThemesScreen';
 import { TutorialScreen } from '../screens/TutorialScreen';
 import { dispatchGame, startNewGame, useGameStore } from '../store/gameStore';
@@ -112,7 +112,7 @@ export const AppNavigator = () => {
   switch (route) {
     case 'game':
       return (
-        <TetrisScreen
+        <GameScreen
           onOpenSettings={() => openSettings('game')}
           onExitToMenu={() => setRoute('menu')}
         />

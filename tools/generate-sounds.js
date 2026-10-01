@@ -72,7 +72,7 @@ const RECIPES = {
       tone({ from: 900, ms: 60, gain: 0.35, noise: 0.9, decay: 9 }),
     ),
   clear: () => arpeggio(['C6', 'E6', 'G6'], 55),
-  tetris: () =>
+  quad: () =>
     concat(
       arpeggio(['C5', 'E5', 'G5', 'C6', 'E6'], 50),
       tone({ from: note('G6'), ms: 260, gain: 0.4, decay: 4 }),

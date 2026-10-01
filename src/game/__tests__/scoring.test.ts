@@ -14,7 +14,7 @@ describe('scoring', () => {
     expect(getLineClearScore(0, 5)).toBe(0);
   });
 
-  it('adds half again for a back-to-back Tetris only', () => {
+  it('adds half again for a back-to-back four-line clear only', () => {
     expect(getBackToBackBonus(4, 2, true)).toBe(800);
     expect(getBackToBackBonus(4, 2, false)).toBe(0);
     expect(getBackToBackBonus(3, 2, true)).toBe(0);

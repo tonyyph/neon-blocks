@@ -5,12 +5,10 @@ import { vi } from '../vi';
 const SAME_ON_PURPOSE = new Set([
   'Marathon',
   'Zone',
-  'Tetris',
   'Cyberpunk',
   'Outrun',
   'Kintsugi',
-  'Octoris',
-  'Decahexatris',
+  'Quad',
   'Combo ×3',
   '',
   '100',
@@ -63,5 +61,26 @@ describe('Vietnamese translation', () => {
 
   it('formats numbers the Vietnamese way', () => {
     expect((12345).toLocaleString(vi.locale)).toBe('12.345');
+  });
+});
+
+/** Every string a player can see, in one language, with string functions called on samples. */
+const allStrings = (node: unknown, out: string[] = []): string[] => {
+  if (typeof node === 'string') out.push(node);
+  else if (typeof node === 'function') out.push(String(node(...SAMPLE_ARGS.slice(0, node.length))));
+  else if (node && typeof node === 'object') Object.values(node).forEach((v) => allStrings(v, out));
+  return out;
+};
+
+describe('trademarks', () => {
+  // "Tetris" belongs to The Tetris Company and the Zone tier names to Tetris Effect; using them
+  // risks App Store rejection or a takedown.
+  const FORBIDDEN = /tetris|octoris|dodecatris|decahexatris|perfectris/i;
+
+  it.each([
+    ['English', en],
+    ['Vietnamese', vi],
+  ])('no %s string uses a Tetris trademark', (_, strings) => {
+    expect(allStrings(strings).filter((text) => FORBIDDEN.test(text))).toEqual([]);
   });
 });

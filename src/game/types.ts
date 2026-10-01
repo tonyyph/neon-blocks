@@ -108,7 +108,7 @@ export interface GameState {
   level: number;
   /** Consecutive locks that cleared lines, minus one. -1 means no combo running. */
   combo: number;
-  /** True when the previous line clear was a Tetris, arming the back-to-back bonus. */
+  /** True when the previous line clear took four lines, arming the back-to-back bonus. */
   backToBack: boolean;
   gravityMs: number;
   lockMs: number;
