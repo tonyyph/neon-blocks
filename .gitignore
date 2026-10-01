@@ -1,5 +1,9 @@
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
+#Agent
+.claude
+skills-lock.json
+
 # dependencies
 node_modules/
 
@@ -35,6 +39,9 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# assets
+store-screenshots
 
 # generated native folders
 /ios

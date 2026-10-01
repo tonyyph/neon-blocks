@@ -80,7 +80,11 @@
     "preset": "jest-expo",
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "/__fixtures__/"
+      "/__fixtures__/",
+      "<rootDir>/store-screenshots/"
+    ],
+    "modulePathIgnorePatterns": [
+      "<rootDir>/store-screenshots/"
     ],
     "setupFiles": [
       "<rootDir>/jest.setup.js"

@@ -7,7 +7,7 @@ module.exports = defineConfig([
   expoConfig,
   prettierRecommended,
   {
-    ignores: ['dist/*', 'node_modules/*', '.expo/*'],
+    ignores: ['dist/*', 'node_modules/*', '.expo/*', 'store-screenshots/*'],
   },
   {
     rules: {
